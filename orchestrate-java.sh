@@ -40,21 +40,18 @@ for specJava in `ls -d $javaDir/*`; do
 done
 
 #add java variables
-if [ "$system" == "linux" ]; then
-	varFile="$HOME/.bash_variables"
-	echo "export PF_DIR=$pfDir" > $varFile
-	maxVersion=0
-	for specJava in `ls -d $javaDir/*`; do
-		expectedJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'.' -f2)
-		if [[ $expectedJavaVersion -gt $maxVersion ]]; then
-			maxVersion=$expectedJavaVersion
-		else
-			sed -i /JAVA${expectedJavaVersion}_HOME=/d $varFile
-		fi
+maxVersion=0
+for specJava in `ls -d $javaDir/*`; do
+	expectedJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'.' -f2)
+	if [[ $expectedJavaVersion -gt $maxVersion ]]; then
+		maxVersion=$expectedJavaVersion
+	else
+		sed -i /JAVA${expectedJavaVersion}_HOME=/d $varFile
+	fi
 	echo "export JAVA${expectedJavaVersion}_HOME=$specJava" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-	done;
-	echo "export JAVA_HOME=\$JAVA${maxVersion}_HOME" >> $varFile
-	cat "$varFile"
-fi
+done;
+echo "export JAVA_HOME=\$JAVA${maxVersion}_HOME" >> $varFile
+echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> $varFile
+
 
 

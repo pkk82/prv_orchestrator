@@ -39,8 +39,12 @@ read pfDir
 pfDir=${pfDir:-$pfDirDefault}
 makeDir $pfDir
 
+
+varFile="$HOME/.bash_variables"
+echo "export PF_DIR=$pfDir" > $varFile
+
 . orchestrate-java.sh
-if [ "$system" == "linux" ]; then
-	. orchestrate-bashrc.sh
-fi
+. orchestrate-scala.sh
+. orchestrate-bashrc.sh
+
 
