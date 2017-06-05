@@ -41,7 +41,9 @@ makeDir $pfDir
 
 
 varFile="$HOME/.bash_variables"
-echo "export PF_DIR=$pfDir" > $varFile
+echo "export CLOUD_SOFTWARE_DIR=$cloudDirDefault" > $varFile
+echo "export PF_DIR=$pfDir" >> $varFile
+
 
 . orchestrate-java.sh
 . orchestrate-scala.sh
