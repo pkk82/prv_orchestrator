@@ -15,7 +15,7 @@ for scalaTgz in `ls -d $cloudDir/scala/*.tgz $cloudDir/scala/*.tar.gz`; do
 	fi
 done
 
-#verify java
+#verify scala
 for specScala in `ls -d $scalaDir/*`; do
 	# verify version
 	expectedScalaVersion=$(echo $specScala | awk -F/ '{print $(NF)}' | sed 's/scala-\(.*\)/\1/')
