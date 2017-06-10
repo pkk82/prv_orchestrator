@@ -53,7 +53,12 @@ cat > $mvnSettings << EOL
 			<password>$encryptedOssSonatypePassword</password>
 		</server>
 		<server>
-			<id>artifactory-pkk82pl.rhcloud.com</id>
+			<id>artifactory-pkk82pl.rhcloud.com-release</id>
+			<username>pkk82</username>
+			<password>$encryptedArtifactoryPassword</password>
+		</server>
+		<server>
+			<id>artifactory-pkk82pl.rhcloud.com-snapshot</id>
 			<username>pkk82</username>
 			<password>$encryptedArtifactoryPassword</password>
 		</server>
