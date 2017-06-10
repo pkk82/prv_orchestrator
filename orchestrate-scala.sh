@@ -30,6 +30,7 @@ done
 
 #add scala variables
 maxVersion=0
+echo "# scala" >> $varFile
 for specScala in `ls -d $scalaDir/*`; do
 	expectedScalaVersion=$(echo $specScala | awk -F/ '{print $(NF)}' | sed 's/.final//' | awk -F. '{print $(NF-1)}')
 	if [[ $expectedScalaVersion -gt $maxVersion ]]; then

@@ -41,6 +41,7 @@ done
 
 #add java variables
 maxVersion=0
+echo "# java" >> $varFile
 for specJava in `ls -d $javaDir/*`; do
 	expectedJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'.' -f2)
 	if [[ $expectedJavaVersion -gt $maxVersion ]]; then
