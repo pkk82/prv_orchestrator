@@ -50,6 +50,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-maven-settings.sh
 . orchestrate-scala.sh
 . orchestrate-kafka.sh
+. orchestrate-nodejs.sh
 . orchestrate-bashrc.sh
 
 
