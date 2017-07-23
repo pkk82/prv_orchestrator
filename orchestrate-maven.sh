@@ -29,6 +29,40 @@ for specMaven in `ls -d $mavenDir/*`; do
 	fi
 done
 
+# verify maven with appropriate Java version https://maven.apache.org/docs/history.html
+# <= 2.1.0 = 4
+# <= 3.1.1 = 5
+# <= 3.2.5 = 6
+# <= 3.5.0 = 7
+currentJavaVersion=$JAVA_HOME
+for specMaven in `ls -d $mavenDir/*`; do
+	mavenVersion=$(echo $specMaven | awk -F/ '{print $(NF)}' | sed 's/apache-maven-\(.*\)/\1/')
+	major=$(echo $mavenVersion | cut -d'.' -f1)
+	minor=$(echo $mavenVersion | cut -d'.' -f2)
+	patch=$(echo $mavenVersion | cut -d'.' -f3)
+	version=$((10000 * $major + 100 * $minor + $patch))
+
+	if (( version <= 20100 )); then
+		JAVA_HOME=$JAVA4_HOME
+	elif (( version <= 30101 )); then
+		JAVA_HOME=$JAVA5_HOME
+	elif (( version <= 30205 )); then
+		JAVA_HOME=$JAVA6_HOME
+	else
+		JAVA_HOME=$JAVA7_HOME
+	fi
+
+	# verify version with specific java version
+	expectedMavenVersion=$(echo $specMaven | awk -F/ '{print $(NF)}' | sed 's/apache-maven-\(.*\)/\1/')
+	actualMavenVersion=$($specMaven/bin/mvn --version 2>&1 | head -n 1 | awk '{print $3}')
+	if [[ $actualMavenVersion == "$expectedMavenVersion" ]]; then
+		echo -e "${GREEN}Maven version $expectedMavenVersion is working with $JAVA_HOME${NC}"
+	else
+		echo -e "${RED}Maven version $expectedMavenVersion is not working with $JAVA_HOME${NC}"
+	fi
+done
+JAVA_HOME=$currentJavaVersion
+
 #add maven variables
 maxVersion=0
 echo "# maven" >> $varFile
