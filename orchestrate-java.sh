@@ -2,7 +2,7 @@
 # copy java to pf
 javaDir=$pfDir/java
 makeDir $javaDir
-for javaTgz in `ls -d $cloudDir/$system/java/*.tar.gz`; do
+for javaTgz in `ls -d $cloudDir/java/$system/*.tar.gz`; do
 	tarDir=$(tar -tf $javaTgz | head -n 1)
 	tarDir=${tarDir%/}
 	destFolder=$(basename $javaTgz | sed 's/\.tar\.gz//g' | sed "s/-$system//g")
