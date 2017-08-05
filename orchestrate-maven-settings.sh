@@ -40,6 +40,10 @@ EOL
 	read -s artifactoryPassword
 	encryptedArtifactoryPassword=$($MVN_HOME/bin/mvn --encrypt-password $artifactoryPassword)
 
+	echo -e -n "\n${CYAN}Artifactory (pkk82@artifactory-pkk82.rhcloud.com) password: ${NC}"
+	read -s artifactoryOldPassword
+	encryptedArtifactoryOldPassword=$($MVN_HOME/bin/mvn --encrypt-password $artifactoryOldPassword)
+
 
 cat > $mvnSettings << EOL
 <?xml version="1.0" encoding="UTF-8"?>
@@ -62,7 +66,31 @@ cat > $mvnSettings << EOL
 			<username>pkk82</username>
 			<password>$encryptedArtifactoryPassword</password>
 		</server>
+		<server>
+			<id>artifactory-pkk82.rhcloud.com-release</id>
+			<username>pkk82</username>
+			<password>$encryptedArtifactoryOldPassword</password>
+		</server>
+		<server>
+			<id>artifactory-pkk82.rhcloud.com-snapshot</id>
+			<username>pkk82</username>
+			<password>$encryptedArtifactoryOldPassword</password>
+		</server>
 	</servers>
+	<profiles>
+		<profile>
+			<id>repo-artifactory-pkk82.rhcloud.com-release</id>
+			<repositories>
+				<repository>
+					<id>artifactory-pkk82.rhcloud.com-release</id>
+					<url>http://artifactory-pkk82.rhcloud.com/artifactory/libs-release-local</url>
+				</repository>
+			</repositories>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+	</profiles>
 </settings>
 EOL
 
