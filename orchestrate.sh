@@ -53,6 +53,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-scala.sh
 . orchestrate-kafka.sh
 . orchestrate-nodejs.sh
+. orchestrate-vscode.sh
 . orchestrate-bashrc.sh
 
 
