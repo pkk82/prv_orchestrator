@@ -44,6 +44,10 @@ EOL
 	read -s artifactoryOldPassword
 	encryptedArtifactoryOldPassword=$($MVN_HOME/bin/mvn --encrypt-password $artifactoryOldPassword)
 
+	echo -e -n "\n${CYAN}Artifactory (pkk82@alibaba.cloud) password: ${NC}"
+	read -s artifactoryCloudPassword
+	encryptedArtifactoryCloudPassword=$($MVN_HOME/bin/mvn --encrypt-password $artifactoryCloudPassword)
+
 
 cat > $mvnSettings << EOL
 <?xml version="1.0" encoding="UTF-8"?>
@@ -76,6 +80,16 @@ cat > $mvnSettings << EOL
 			<username>pkk82</username>
 			<password>$encryptedArtifactoryOldPassword</password>
 		</server>
+		<server>
+			<id>pkk82-artifactory-alibaba-cloud-release</id>
+			<username>pkk82</username>
+			<password>$encryptedArtifactoryCloudPassword</password>
+		</server>
+		<server>
+			<id>pkk82-artifactory-alibaba-cloud-snapshot</id>
+			<username>pkk82</username>
+			<password>$encryptedArtifactoryCloudPassword</password>
+		</server>
 	</servers>
 	<profiles>
 		<profile>
@@ -84,6 +98,18 @@ cat > $mvnSettings << EOL
 				<repository>
 					<id>artifactory-pkk82.rhcloud.com-release</id>
 					<url>http://artifactory-pkk82.rhcloud.com/artifactory/libs-release-local</url>
+				</repository>
+			</repositories>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>repo-pkk82-artifactory-alibaba-cloud-release</id>
+			<repositories>
+				<repository>
+					<id>pkk82-artifactory-alibaba-cloud-release</id>
+					<url>http://47.91.91.114:8081/artifactory/pkk82-mvn-repo-release</url>
 				</repository>
 			</repositories>
 			<activation>
