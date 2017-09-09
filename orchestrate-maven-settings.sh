@@ -109,7 +109,7 @@ cat > $mvnSettings << EOL
 			<repositories>
 				<repository>
 					<id>pkk82-artifactory-alibaba-cloud-release</id>
-					<url>http://47.91.91.114:8081/artifactory/pkk82-mvn-repo-release</url>
+					<url>https://47.91.91.114:8444/artifactory/pkk82-mvn-repo-release</url>
 				</repository>
 			</repositories>
 			<activation>
