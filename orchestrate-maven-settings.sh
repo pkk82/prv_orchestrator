@@ -112,6 +112,26 @@ cat > $mvnSettings << EOL
 					<url>https://47.91.91.114:8444/artifactory/pkk82-mvn-repo-release</url>
 				</repository>
 			</repositories>
+			<properties>
+				<repo.release.id>pkk82-artifactory-alibaba-cloud-release</repo.release.id>
+				<repo.release.url>https://47.91.91.114:8444/artifactory/pkk82-mvn-repo-release</repo.release.url>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>repo-pkk82-artifactory-alibaba-cloud-snapshot</id>
+			<repositories>
+				<repository>
+					<id>pkk82-artifactory-alibaba-cloud-snapshot</id>
+					<url>https://47.91.91.114:8444/artifactory/pkk82-mvn-repo-snapshot</url>
+				</repository>
+			</repositories>
+			<properties>
+				<repo.snapshot.id>pkk82-artifactory-alibaba-cloud-snapshot</repo.snapshot.id>
+				<repo.snapshot.url>https://47.91.91.114:8444/artifactory/pkk82-mvn-repo-snapshot</repo.snapshot.url>
+			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
