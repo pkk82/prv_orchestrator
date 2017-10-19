@@ -53,6 +53,7 @@ for specJava in `ls -d $javaDir/*`; do
 done;
 echo "export JAVA_HOME=\$JAVA${maxVersion}_HOME" >> $varFile
 echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> $varFile
+. $varFile
 
 
 
