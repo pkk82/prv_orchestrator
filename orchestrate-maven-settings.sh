@@ -36,18 +36,13 @@ EOL
 	read -s ossSonatypePassword
 	encryptedOssSonatypePassword=$($MVN_HOME/bin/mvn --encrypt-password $ossSonatypePassword)
 
-	echo -e -n "\n${CYAN}Artifactory (pkk82@artifactory-pkk82pl.rhcloud.com) password: ${NC}"
-	read -s artifactoryPassword
-	encryptedArtifactoryPassword=$($MVN_HOME/bin/mvn --encrypt-password $artifactoryPassword)
-
-	echo -e -n "\n${CYAN}Artifactory (pkk82@artifactory-pkk82.rhcloud.com) password: ${NC}"
-	read -s artifactoryOldPassword
-	encryptedArtifactoryOldPassword=$($MVN_HOME/bin/mvn --encrypt-password $artifactoryOldPassword)
-
 	echo -e -n "\n${CYAN}Artifactory (pkk82@alibaba.cloud) password: ${NC}"
 	read -s artifactoryCloudPassword
 	encryptedArtifactoryCloudPassword=$($MVN_HOME/bin/mvn --encrypt-password $artifactoryCloudPassword)
 
+	echo -e -n "\n${CYAN}Docker (pkk82@docker.io) password: ${NC}"
+	read -s $dockerIoPassword
+	$encryptedDockerIoPassword=$($MVN_HOME/bin/mvn --encrypt-password $dockerIoPassword)
 
 cat > $mvnSettings << EOL
 <?xml version="1.0" encoding="UTF-8"?>
@@ -61,24 +56,14 @@ cat > $mvnSettings << EOL
 			<password>$encryptedOssSonatypePassword</password>
 		</server>
 		<server>
-			<id>artifactory-pkk82pl.rhcloud.com-release</id>
+			<id>docker.io</id>
 			<username>pkk82</username>
-			<password>$encryptedArtifactoryPassword</password>
+			<password>$encryptedDockerIoPassword</password>
 		</server>
 		<server>
-			<id>artifactory-pkk82pl.rhcloud.com-snapshot</id>
+			<id>pkk82-artifactory-alibaba-cloud-public</id>
 			<username>pkk82</username>
-			<password>$encryptedArtifactoryPassword</password>
-		</server>
-		<server>
-			<id>artifactory-pkk82.rhcloud.com-release</id>
-			<username>pkk82</username>
-			<password>$encryptedArtifactoryOldPassword</password>
-		</server>
-		<server>
-			<id>artifactory-pkk82.rhcloud.com-snapshot</id>
-			<username>pkk82</username>
-			<password>$encryptedArtifactoryOldPassword</password>
+			<password>$encryptedArtifactoryCloudPassword</password>
 		</server>
 		<server>
 			<id>pkk82-artifactory-alibaba-cloud-release</id>
@@ -93,11 +78,11 @@ cat > $mvnSettings << EOL
 	</servers>
 	<profiles>
 		<profile>
-			<id>repo-artifactory-pkk82.rhcloud.com-release</id>
+			<id>repo-pkk82-artifactory-alibaba-cloud-public-anonymous</id>
 			<repositories>
 				<repository>
-					<id>artifactory-pkk82.rhcloud.com-release</id>
-					<url>http://artifactory-pkk82.rhcloud.com/artifactory/libs-release-local</url>
+					<id>pkk82-artifactory-alibaba-cloud-public-anonymous</id>
+					<url>http://47.91.91.114:8081/artifactory/pkk82-mvn-repo-public</url>
 				</repository>
 			</repositories>
 			<activation>
