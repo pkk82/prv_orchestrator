@@ -3,9 +3,9 @@ rc=~/.bashrc
 aliases=~/.bash_aliases
 
 cat > $aliases << EOL
-alias dsa="docker stop \$(docker ps -q)"
-alias dra="docker rm \$(docker ps -a -q)"
-alias dria="docker rmi \$(docker images -q)"
-alias dris="docker rmi \$(docker images | grep 'SNAPSHOT' | awk '{print \$3}')"
+alias dsa='docker ps -q | xargs docker stop'
+alias dra='docker ps -a -q | xargs docker rm'
+alias dria='docker images -q | xargs docker rmi -f'
+alias dris='docker images | grep SNAPSHOT | awk '\''{print \$3}'\'' | xargs docker rmi -f'
 EOL
 . $rc
