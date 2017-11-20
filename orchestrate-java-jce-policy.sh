@@ -22,7 +22,7 @@ for jceZip in `ls -d $cloudDir/java/jce-policy/*.zip`; do
 			else
 				mv $localPolicy $localPolicyBak
 			fi
-			unzip -j $jceZip *.jar -d $dstDir
+			unzip -j $jceZip **/*.jar -d $dstDir
 		fi
 	done
 done
