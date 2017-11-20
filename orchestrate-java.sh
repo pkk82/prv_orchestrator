@@ -16,7 +16,7 @@ done
 
 #verify java
 javaDir=$pfDir/java
-for specJava in `ls -d $javaDir/*`; do
+for specJava in `ls -d $javaDir/jdk-*`; do
 	# verify version
 	expectedJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | tr 'u' '_')
 	actualJavaVersion=$($specJava/bin/java -version 2>&1 | grep -i version)
@@ -42,7 +42,7 @@ done
 #add java variables
 maxVersion=0
 echo "# java" >> $varFile
-for specJava in `ls -d $javaDir/*`; do
+for specJava in `ls -d $javaDir/jdk-*`; do
 	expectedJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'.' -f2)
 	if [[ $expectedJavaVersion -gt $maxVersion ]]; then
 		maxVersion=$expectedJavaVersion

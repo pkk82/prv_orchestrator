@@ -4,7 +4,7 @@ javaDir=$pfDir/java
 securityPath="jre/lib/security"
 for jceZip in `ls -d $cloudDir/java/jce-policy/*.zip`; do
 	javaVersionFromPolicy=$(echo $jceZip | awk -F/ '{print $(NF)}' | sed 's/jce_policy-\(.*\).zip/\1/');
-	for specJava in `ls -d $javaDir/*`; do
+	for specJava in `ls -d $javaDir/jdk-*`; do
 		javaVersion=$(echo $specJava | awk -F/ '{print $(NF)}' | awk -F- '{print $(NF-1)}' | cut -d'.' -f2)
 		if [[ "$javaVersion" == "$javaVersionFromPolicy" ]]; then
 			dstDir=${specJava}/${securityPath}
