@@ -41,8 +41,8 @@ EOL
 	encryptedArtifactoryCloudPassword=$($MVN_HOME/bin/mvn --encrypt-password $artifactoryCloudPassword)
 
 	echo -e -n "\n${CYAN}Docker (pkk82@docker.io) password: ${NC}"
-	read -s $dockerIoPassword
-	$encryptedDockerIoPassword=$($MVN_HOME/bin/mvn --encrypt-password $dockerIoPassword)
+	read -s dockerIoPassword
+	encryptedDockerIoPassword=$($MVN_HOME/bin/mvn --encrypt-password $dockerIoPassword)
 
 cat > $mvnSettings << EOL
 <?xml version="1.0" encoding="UTF-8"?>
