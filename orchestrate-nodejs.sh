@@ -32,6 +32,7 @@ done
 #add nodejs variables
 maxVersionToCompare=0
 maxVersion=''
+aliases=~/.bash_aliases
 echo "# nodejs" >> $varFile
 for specNodejs in `ls -d $nodejsDir/*`; do
 	version=$(echo $specNodejs | awk -F- '{print $NF}')
@@ -44,6 +45,7 @@ for specNodejs in `ls -d $nodejsDir/*`; do
 		maxVersion=$version
 	fi
 	echo "export NODEJS${version}_HOME=$specNodejs" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+	echo "alias use-nodejs-${version}='export NODEJS_HOME=\$NODEJS${version}_HOME; export PATH=\$NODEJS_HOME/bin:\$PATH'" >> $aliases
 done;
 echo "export NODEJS_HOME=\$NODEJS${maxVersion}_HOME" >> $varFile
 echo "export PATH=\$NODEJS_HOME/bin:\$PATH" >> $varFile
