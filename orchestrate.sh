@@ -30,13 +30,23 @@ read cloudDir
 cloudDir=${cloudDir:-$cloudDirDefault}
 
 # create pf dir
-existingDirs=$(ls -d $mainDir/pf*)
-echo "Existing pf directories:"
-echo "$existingDirs"
-pfDirDefault="$mainDir/pf-$(date '+%Y%m%d-%H%M')"
-echo -e -n "${CYAN}Enter path to program files directory${NC} ($pfDirDefault): "
-read pfDir
-pfDir=${pfDir:-$pfDirDefault}
+
+useStandardPfDirDefault="y"
+echo -e -n "${CYAN}Use ${mainDir}/pf directory [y/n]${NC} ($useStandardPfDirDefault): "
+read useStandardPfDir
+useStandardPfDir=${useStandardPfDir:-$useStandardPfDirDefault}
+
+if [ "$useStandardPfDir" == "y" ]; then
+	pfDir=${mainDir}/pf
+else
+	existingDirs=$(ls -d $mainDir/pf*)
+	echo "Existing pf directories:"
+	echo "$existingDirs"
+	pfDirDefault="$mainDir/pf-$(date '+%Y%m%d-%H%M')"
+	echo -e -n "${CYAN}Enter path to program files directory${NC} ($pfDirDefault): "
+	read pfDir
+	pfDir=${pfDir:-$pfDirDefault}
+fi
 makeDir $pfDir
 
 
