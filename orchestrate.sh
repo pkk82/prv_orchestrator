@@ -66,6 +66,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-nodejs.sh
 . orchestrate-vscode.sh
 . orchestrate-intellij-idea.sh
+. orchestrate-password.sh
 . orchestrate-bashrc.sh
 
 
