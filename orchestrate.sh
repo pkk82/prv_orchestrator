@@ -4,7 +4,7 @@ NC='\033[0m'; RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'
 function makeDir {
 	if [ -d $1 ]; then
 		echo -e "${CYAN}Dir $1 already exists${NC}"
-	elif mkdir $1; then
+	elif mkdir -p $1; then
 		echo -e "${GREEN}Dir $1 created${NC}" 
 	else
 		echo -e "${RED}Dir $1 not created${NC}"

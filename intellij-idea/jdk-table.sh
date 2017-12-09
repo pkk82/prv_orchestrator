@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+makeDir $intellijHomeDir/config/options
 jdkTableXmlFile=$intellijHomeDir/config/options/jdk.table.xml
 
 cat > $jdkTableXmlFile << EOL
