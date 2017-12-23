@@ -14,6 +14,26 @@ for javaTgz in `ls -d $cloudDir/java/$system/*.tar.gz`; do
 	fi
 done
 
+for javaDmg in `ls -d $cloudDir/java/$system/*.dmg`; do
+	mountDir=`hdiutil attach $javaDmg | awk 'FNR==2{print substr($0, index($0, $3))}'`;
+	pkgFile=`find "${mountDir}" -name "*.pkg" 2>/dev/null | head -n 1`
+	majorVersion=`echo $javaDmg | awk -F- '{print $(NF-2)}' | cut -d'u' -f1`
+	patchVersion=`echo $javaDmg | awk -F- '{print $(NF-2)}' | cut -d'u' -f2`
+	destFolder=jdk-1.${majorVersion}.0_${patchVersion}-x64
+	if [ -d "$javaDir/$destFolder" ]; then
+		echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
+	else
+		rm -rf /tmp/$destFolder
+		rm -rf /tmp/$destFolder-unzipped
+		pkgutil --expand "$pkgFile" /tmp/$destFolder
+		payloadFile=/tmp/$destFolder/jdk1${majorVersion}0${patchVersion}.pkg/Payload
+		mkdir /tmp/$destFolder-unzipped
+		mkdir "$javaDir/$destFolder"
+		tar -zxf $payloadFile -C /tmp/$destFolder-unzipped
+		cp -R /tmp/$destFolder-unzipped/Contents/Home/* "$javaDir/$destFolder/"
+	fi
+done
+
 #verify java
 javaDir=$pfDir/java
 for specJava in `ls -d $javaDir/jdk-*`; do
