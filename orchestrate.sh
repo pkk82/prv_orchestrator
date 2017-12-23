@@ -20,6 +20,9 @@ if [ "$USERPROFILE" != "" ]; then
 elif [[ "$osname" == "Linux" ]]; then
 	system="linux"
 	mainDir=$HOME
+elif [[ "$osname" == "Darwin" ]]; then
+	system="mac"
+	mainDir=$HOME
 fi
 echo -e "${GREEN}Detected system: $system${NC}"
 
