@@ -82,3 +82,4 @@ done;
 echo "export MVN_HOME=\$MVN${maxVersion}_HOME" >> $varFile
 echo "export MAVEN_OPTS=\"-Dmaven.wagon.http.ssl.insecure=true\"" >> $varFile
 echo "export PATH=\$MVN_HOME/bin:\$PATH" >> $varFile
+. $varFile
