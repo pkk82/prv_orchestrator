@@ -68,7 +68,7 @@ for specGradle in `ls -d $gradleDir/*`; do
 	if [[ $major -gt $maxVersion ]]; then
 		maxVersion=$major
 	else
-		sed -i /GRADLE${major}_HOME=/d $varFile
+		sed -i $sedBackupSuffix /GRADLE${major}_HOME=/d $varFile
 	fi
 	echo "export GRADLE${major}_HOME=$specGradle" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
 done;
