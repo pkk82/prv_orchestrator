@@ -17,12 +17,15 @@ osname=`uname`
 if [ "$USERPROFILE" != "" ]; then
 	system="windows"
 	mainDir="/c"
+	sedBackupSuffix=""
 elif [[ "$osname" == "Linux" ]]; then
 	system="linux"
 	mainDir=$HOME
+	sedBackupSuffix=""
 elif [[ "$osname" == "Darwin" ]]; then
 	system="mac"
 	mainDir=$HOME
+	sedBackupSuffix="''"
 fi
 echo -e "${GREEN}Detected system: $system${NC}"
 

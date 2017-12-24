@@ -75,7 +75,7 @@ for specMaven in `ls -d $mavenDir/*`; do
 	if [[ $major -gt $maxVersion ]]; then
 		maxVersion=$major
 	else
-		sed -i /MVN${major}_HOME=/d $varFile
+		sed -i $sedBackupSuffix /MVN${major}_HOME=/d $varFile
 	fi
 	echo "export MVN${major}_HOME=$specMaven" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
 done;
