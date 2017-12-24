@@ -3,15 +3,18 @@
 nodejsDir=$pfDir/nodejs
 makeDir $nodejsDir
 
-for nodejsTgz in `ls -d $cloudDir/nodejs/*-$system-x64.* 2>/dev/null`; do
+os=`echo $osname | awk '{print tolower($0)}'`
+for nodejsTgz in `ls -d $cloudDir/nodejs/$system/*-$os-x64.* 2>/dev/null`; do
 	archiveDir=$(tar -tf $nodejsTgz | head -n 1)
 	archiveDir=${archiveDir%/}
-	destFolder=$(echo $archiveDir | sed 's/node-v/nodejs-/g' | sed "s/-$system-x64//g")
+	destFolder=$(echo $archiveDir | sed 's/node-v/nodejs-/g' | sed "s/-$os-x64//g")
 	echo $destFolder
 	if [ -d "$nodejsDir/$destFolder" ]; then
 		echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
 	else
-		tar xf $nodejsTgz --transform "s/$archiveDir/$destFolder/" -C $nodejsDir
+#		tar xf $nodejsTgz --transform "s/$archiveDir/$destFolder/" -C $nodejsDir
+		tar xf $nodejsTgz -C $nodejsDir
+		mv $nodejsDir/$archiveDir $nodejsDir/$destFolder
 		echo "$nodejsTgz extracted to $nodejsDir"
 	fi
 done
