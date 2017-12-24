@@ -36,11 +36,11 @@ for specGradle in `ls -d $gradleDir/*`; do
 	gradleVersion=$(echo $specGradle | awk -F/ '{print $(NF)}' | sed 's/gradle-\(.*\)/\1/')
 	major=$(echo $gradleVersion | cut -d'.' -f1)
 
-	if (( major <= 1 )); then
+	if (( major <= 1 )) && [ ! -z $JAVA5_HOME ]; then
 		JAVA_HOME=$JAVA5_HOME
-	elif (( major <= 2 )); then
+	elif (( major <= 2 )) && [ ! -z $JAVA6_HOME ]; then
 		JAVA_HOME=$JAVA6_HOME
-	elif (( major <= 3 )); then
+	elif (( major <= 3 )) && [ ! -z $JAVA7_HOME ]; then
 		JAVA_HOME=$JAVA7_HOME
 	else
 		JAVA_HOME=$JAVA7_HOME
