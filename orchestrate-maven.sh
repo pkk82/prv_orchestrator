@@ -42,11 +42,11 @@ for specMaven in `ls -d $mavenDir/*`; do
 	patch=$(echo $mavenVersion | cut -d'.' -f3)
 	version=$((10000 * $major + 100 * $minor + $patch))
 
-	if (( version <= 20100 )); then
+	if (( version <= 20100 )) && [ ! -z $JAVA4_HOME ]; then
 		JAVA_HOME=$JAVA4_HOME
-	elif (( version <= 30101 )); then
+	elif (( version <= 30101 )) && [ ! -z $JAVA5_HOME ]; then
 		JAVA_HOME=$JAVA5_HOME
-	elif (( version <= 30205 )); then
+	elif (( version <= 30205 )) && [ ! -z $JAVA6_HOME ]; then
 		JAVA_HOME=$JAVA6_HOME
 	else
 		JAVA_HOME=$JAVA7_HOME
