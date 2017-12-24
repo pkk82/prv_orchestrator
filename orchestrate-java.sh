@@ -2,7 +2,7 @@
 # copy java to pf
 javaDir=$pfDir/java
 makeDir $javaDir
-for javaTgz in `ls -d $cloudDir/java/$system/*.tar.gz`; do
+for javaTgz in `ls -d $cloudDir/java/$system/*.tar.gz 2>/dev/null`; do
 	tarDir=$(tar -tf $javaTgz | head -n 1)
 	tarDir=${tarDir%/}
 	destFolder=$(basename $javaTgz | sed 's/\.tar\.gz//g' | sed "s/-$system//g")
@@ -14,7 +14,7 @@ for javaTgz in `ls -d $cloudDir/java/$system/*.tar.gz`; do
 	fi
 done
 
-for javaDmg in `ls -d $cloudDir/java/$system/*.dmg`; do
+for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
 	mountDir=`hdiutil attach $javaDmg | awk 'FNR==2{print substr($0, index($0, $3))}'`;
 	pkgFile=`find "${mountDir}" -name "*.pkg" 2>/dev/null | head -n 1`
 	majorVersion=`echo $javaDmg | awk -F- '{print $(NF-2)}' | cut -d'u' -f1`
