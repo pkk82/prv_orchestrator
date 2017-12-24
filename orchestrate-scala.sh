@@ -36,7 +36,7 @@ for specScala in `ls -d $scalaDir/*`; do
 	if [[ $expectedScalaVersion -gt $maxVersion ]]; then
 		maxVersion=$expectedScalaVersion
 	else
-		sed -i /SCALA${expectedScalaVersion}_HOME=/d $varFile
+		sed -i $sedBackupSuffix /SCALA${expectedScalaVersion}_HOME=/d $varFile
 	fi
 	echo "export SCALA${expectedScalaVersion}_HOME=$specScala" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
 done;
