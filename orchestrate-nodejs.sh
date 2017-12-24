@@ -3,7 +3,7 @@
 nodejsDir=$pfDir/nodejs
 makeDir $nodejsDir
 
-for nodejsTgz in `ls -d $cloudDir/nodejs/*-$system-x64.*`; do
+for nodejsTgz in `ls -d $cloudDir/nodejs/*-$system-x64.* 2>/dev/null`; do
 	archiveDir=$(tar -tf $nodejsTgz | head -n 1)
 	archiveDir=${archiveDir%/}
 	destFolder=$(echo $archiveDir | sed 's/node-v/nodejs-/g' | sed "s/-$system-x64//g")
@@ -17,7 +17,7 @@ for nodejsTgz in `ls -d $cloudDir/nodejs/*-$system-x64.*`; do
 done
 
 #verify nodejs
-for specNodejs in `ls -d $nodejsDir/*`; do
+for specNodejs in `ls -d $nodejsDir/* 2>/dev/null`; do
 	# verify version
 	expectedNodejsVersion=$(echo $specNodejs | awk -F- '{print $NF}')
 	actualNodejsVersion=$($specNodejs/bin/node --version)
@@ -31,10 +31,10 @@ done
 
 #add nodejs variables
 maxVersionToCompare=0
-maxVersion=''
+maxVersion=""
 aliases=~/.bash_aliases
 echo "# nodejs" >> $varFile
-for specNodejs in `ls -d $nodejsDir/*`; do
+for specNodejs in `ls -d $nodejsDir/* 2>/dev/null`; do
 	version=$(echo $specNodejs | awk -F- '{print $NF}')
 	majorVersion=$(echo $version | cut -d. -f1)
 	minorVersion=$(echo $version | cut -d. -f2)
@@ -47,7 +47,9 @@ for specNodejs in `ls -d $nodejsDir/*`; do
 	echo "export NODEJS${version}_HOME=$specNodejs" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
 	echo "alias use-nodejs-${version}='export NODEJS_HOME=\$NODEJS${version}_HOME; export PATH=\$NODEJS_HOME/bin:\$PATH'" >> $aliases
 done;
+
+if [[ "$maxVersion" != "" ]]; then
 echo "export NODEJS_HOME=\$NODEJS${maxVersion}_HOME" >> $varFile
 echo "export PATH=\$NODEJS_HOME/bin:\$PATH" >> $varFile
-
+fi
 
