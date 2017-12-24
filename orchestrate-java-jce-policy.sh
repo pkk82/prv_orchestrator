@@ -12,14 +12,14 @@ for jceZip in `ls -d $cloudDir/java/jce-policy/*.zip`; do
 			exportPolicyBak=${exportPolicy}.bak
 			if [[ -f $exportPolicyBak ]]; then
 				echo -e "${CYAN}File $exportPolicyBak exists - skipping${NC}"
-			else
+			elif [[ -f $exportPolicy ]]; then
 				mv $exportPolicy $exportPolicyBak
 			fi
 			localPolicy=$dstDir/local_policy.jar
 			localPolicyBak=${localPolicy}.bak
 			if [[ -f $localPolicyBak ]]; then
 				echo -e "${CYAN}File $localPolicyBak exists - skipping${NC}"
-			else
+			elif [[ -f $localPolicy ]]; then
 				mv $localPolicy $localPolicyBak
 			fi
 			unzip -j $jceZip **/*.jar -d $dstDir
