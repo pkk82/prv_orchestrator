@@ -63,6 +63,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-aliases.sh
 . orchestrate-java.sh
 . orchestrate-java-jce-policy.sh
+. orchestrate-kotlin.sh
 . orchestrate-maven.sh
 . orchestrate-maven-settings.sh
 . orchestrate-maven-toolchains.sh
