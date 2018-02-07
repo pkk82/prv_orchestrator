@@ -1,16 +1,23 @@
 #!/usr/bin/env bash
-rc=~/.bashrc
-var=~/.bash_variables
 
-if [ ! -f $var ]; then
-	echo -e "${CYAN}File $var does not exist${NC}"
+if [ ! -f $varFile ]; then
+	echo -e "${CYAN}File $varFile does not exist${NC}"
 fi
 
-if grep -q "$var" "$rc"; then
-	echo -e "${GREEN}$rc loads $var${NC}"
+if grep -q "$varFile" "$rcFile"; then
+	echo -e "${GREEN}$rcFile loads $varFile${NC}"
 else
-	echo -e "${CYAN}modifying $rc to load $var${NC}"
-	echo "if [ -f $var ]; then" >> $rc
-	echo "  . $var" >> $rc
-	echo "fi" >> $rc
+	echo -e "${CYAN}modifying $rcFile to load $varFile${NC}"
+	echo "if [ -f $varFile ]; then" >> $rcFile
+	echo "  . $varFile" >> $rcFile
+	echo "fi" >> $rcFile
+fi
+
+if grep -q "$aliasesFile" "$rcFile"; then
+	echo -e "${GREEN}$rcFile loads $aliasesFile${NC}"
+else
+	echo -e "${CYAN}modifying $rcFile to load $aliasesFile${NC}"
+	echo "if [ -f $aliasesFile ]; then" >> $rcFile
+	echo "  . $aliasesFile" >> $rcFile
+	echo "fi" >> $rcFile
 fi

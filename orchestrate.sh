@@ -55,7 +55,8 @@ else
 fi
 makeDir $pfDir
 
-
+rcFile="$HOME/.bashrc"
+aliasesFile="$HOME/.bash_aliases"
 varFile="$HOME/.bash_variables"
 echo "export CLOUD_SOFTWARE_DIR=$cloudDirDefault" > $varFile
 echo "export PF_DIR=$pfDir" >> $varFile
