@@ -25,7 +25,7 @@ elif [[ "$osname" == "Linux" ]]; then
 elif [[ "$osname" == "Darwin" ]]; then
 	system="mac"
 	mainDir=$HOME
-	sedBackupSuffix="''"
+	sedBackupSuffix=".bak"
 fi
 echo -e "${GREEN}Detected system: $system${NC}"
 
