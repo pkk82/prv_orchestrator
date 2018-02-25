@@ -76,6 +76,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-intellij-idea.sh
 . orchestrate-password.sh
 . orchestrate-backups-script.sh
+. orchestrate-postgres.sh
 . orchestrate-bashrc.sh
 
 
