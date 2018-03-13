@@ -29,6 +29,32 @@ function unzipFamily {
 	done
 }
 
+function verify {
+	familyDir=$pfDir/$1
+	for spec in `ls -d $familyDir/*`; do
+		expectedVersion=$(echo $spec | awk -F/ '{print $(NF)}' | sed "s/$1-\(.*\)/\1/")
+		actualVersion=$(eval $spec/$2)
+		if [[ $actualVersion == "$expectedVersion" ]]; then
+			echo -e "${GREEN}$1 version is correct - $actualVersion${NC}"
+		else
+			echo -e "${RED}$1 version is not correct - expected: $expectedVersion, got: $actualVersion${NC}"
+		fi
+	done
+}
+#gradleDir=$pfDir/gradle
+##verify gradle
+#for specGradle in `ls -d $gradleDir/*`; do
+#	# verify version
+#	expectedGradleVersion=$(echo $specGradle | awk -F/ '{print $(NF)}' | sed 's/gradle-\(.*\)/\1/')
+#	actualGradleVersion=$($specGradle/bin/gradle --version | grep Gradle | awk '{print $2}')
+#	if [[ $actualGradleVersion == "$expectedGradleVersion" ]]; then
+#		echo -e "${GREEN}Gradle version is correct - $actualGradleVersion${NC}"
+#	else
+#		echo -e "${RED}Gradle version is not correct - expected: $expectedGradleVersion, got: $actualGradleVersion${NC}"
+#	fi
+#done
+#
+
 # calculate system
 osname=`uname`
 if [ "$USERPROFILE" != "" ]; then
@@ -81,19 +107,20 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-aliases.sh
 . orchestrate-java.sh
 . orchestrate-java-jce-policy.sh
-. orchestrate-kotlin.sh
-. orchestrate-maven.sh
-. orchestrate-maven-settings.sh
-. orchestrate-maven-toolchains.sh
+. orchestrate-ant.sh
+#. orchestrate-kotlin.sh
+#. orchestrate-maven.sh
+#. orchestrate-maven-settings.sh
+#. orchestrate-maven-toolchains.sh
 . orchestrate-gradle.sh
-. orchestrate-scala.sh
-. orchestrate-kafka.sh
-. orchestrate-nodejs.sh
-. orchestrate-vscode.sh
-. orchestrate-intellij-idea.sh
-. orchestrate-password.sh
-. orchestrate-backups-script.sh
-. orchestrate-postgres.sh
+#. orchestrate-scala.sh
+#. orchestrate-kafka.sh
+#. orchestrate-nodejs.sh
+#. orchestrate-vscode.sh
+#. orchestrate-intellij-idea.sh
+#. orchestrate-password.sh
+#. orchestrate-backups-script.sh
+#. orchestrate-postgres.sh
 . orchestrate-bashrc.sh
 
 

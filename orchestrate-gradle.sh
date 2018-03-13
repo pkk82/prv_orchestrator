@@ -2,22 +2,9 @@
 
 # copy gradle to pf
 unzipFamily gradle
-. $varFile
+verify gradle "bin/gradle --version | grep Gradle | awk '{print \$2}'"
 
 gradleDir=$pfDir/gradle
-#verify gradle
-for specGradle in `ls -d $gradleDir/*`; do
-	# verify version
-	expectedGradleVersion=$(echo $specGradle | awk -F/ '{print $(NF)}' | sed 's/gradle-\(.*\)/\1/')
-	actualGradleVersion=$($specGradle/bin/gradle --version | grep Gradle | awk '{print $2}')
-	if [[ $actualGradleVersion == "$expectedGradleVersion" ]]; then
-		echo -e "${GREEN}Gradle version is correct - $actualGradleVersion${NC}"
-	else
-		echo -e "${RED}Gradle version is not correct - expected: $expectedGradleVersion, got: $actualGradleVersion${NC}"
-	fi
-done
-
-
 ## verify gradle with appropriate Java version
 currentJavaVersion=$JAVA_HOME
 for specGradle in `ls -d $gradleDir/*`; do
