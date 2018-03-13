@@ -12,6 +12,23 @@ function makeDir {
 	fi
 }
 
+
+function unzipFamily {
+	familyDir=$pfDir/$1
+	makeDir $familyDir
+	for zip in `ls -d $cloudDir/$1/*.zip`; do
+		zipDir=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
+		zipDir=${zipDir%/}
+		destFolder=$familyDir/$zipDir
+		if [ -d "$destFolder" ]; then
+			echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
+		else
+			unzip -q $zip -d $familyDir
+			echo "$zipDir extracted to $familyDir"
+		fi
+	done
+}
+
 # calculate system
 osname=`uname`
 if [ "$USERPROFILE" != "" ]; then

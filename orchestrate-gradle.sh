@@ -1,22 +1,10 @@
 #!/usr/bin/env bash
 
 # copy gradle to pf
-gradleDir=$pfDir/gradle
-makeDir $gradleDir
-for gradleZip in `ls -d $cloudDir/gradle/*.zip`; do
-	zipDir=$(unzip -l $gradleZip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
-	zipDir=${zipDir%/}
-	destFolder=$gradleDir/$zipDir
-	if [ -d "$destFolder" ]; then
-		echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
-	else
-		unzip -q $gradleZip -d $gradleDir
-		echo "$gradleZip extracted to $gradleDir"
-	fi
-done
-
+unzipFamily gradle
 . $varFile
 
+gradleDir=$pfDir/gradle
 #verify gradle
 for specGradle in `ls -d $gradleDir/*`; do
 	# verify version
