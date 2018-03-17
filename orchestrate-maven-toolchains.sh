@@ -1,25 +1,17 @@
 #!/usr/bin/env bash
-configureToolchainsDefault="n"
-echo -e -n "${CYAN}Configure toolchains.xml [y/n]${NC} ($configureToolchainsDefault): "
-read configureToolchains
-configureToolchains=${configureToolchains:-configureToolchainsDefault}
 
-if [ "$configureToolchains" == "y" ]; then
+dotM2=$HOME/.m2
+mkdir -p $dotM2
 
-	dotM2=$HOME/.m2
-	mkdir -p $dotM2
+toolchains=$dotM2/toolchains.xml
 
-	toolchains=$dotM2/toolchains.xml
-	mvnSecuritySettings=$dotM2/settings-security.xml
-
-	rm -rf $toolchains
+rm -rf $toolchains
 
 cat >> $toolchains << EOL
 <?xml version="1.0" encoding="UTF8"?>
 <toolchains>
 EOL
 
-#verify java
 javaDir=$pfDir/java
 for specJava in `ls -d $javaDir/*`; do
 
@@ -55,5 +47,4 @@ cat >> $toolchains << EOL
 </toolchains>
 EOL
 
-
-fi
+echo -e "${GREEN}$toolchains configured${NC}"
