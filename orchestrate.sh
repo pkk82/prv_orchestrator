@@ -40,19 +40,30 @@ function verify {
 		fi
 	done
 }
-#gradleDir=$pfDir/gradle
-##verify gradle
-#for specGradle in `ls -d $gradleDir/*`; do
-#	# verify version
-#	expectedGradleVersion=$(echo $specGradle | awk -F/ '{print $(NF)}' | sed 's/gradle-\(.*\)/\1/')
-#	actualGradleVersion=$($specGradle/bin/gradle --version | grep Gradle | awk '{print $2}')
-#	if [[ $actualGradleVersion == "$expectedGradleVersion" ]]; then
-#		echo -e "${GREEN}Gradle version is correct - $actualGradleVersion${NC}"
-#	else
-#		echo -e "${RED}Gradle version is not correct - expected: $expectedGradleVersion, got: $actualGradleVersion${NC}"
-#	fi
-#done
-#
+
+function createVariables {
+	maxVersionToCompare=0
+	maxVersion=""
+	familyDir=$pfDir/$1
+	echo "# $1" >> $varFile
+	for spec in `ls -d $familyDir/* 2>/dev/null`; do
+		version=$(echo $spec | awk -F- '{print $NF}')
+		majorVersion=$(echo $version | cut -d. -f1)
+		minorVersion=$(echo $version | cut -d. -f2)
+		version=${majorVersion}_${minorVersion}
+		versionToCompare=$((10000 * $majorVersion + $minorVersion))
+		if [[ $versionToCompare -gt $maxVersionToCompare ]]; then
+			maxVersionToCompare=$versionToCompare
+			maxVersion=$version
+		fi
+		echo "export $2${version}_HOME=$spec" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+	done;
+
+	if [[ "$maxVersion" != "" ]]; then
+		echo "export $2_HOME=\$$2${maxVersion}_HOME" >> $varFile
+		echo "export PATH=\$$2_HOME/bin:\$PATH" >> $varFile
+	fi
+}
 
 # calculate system
 osname=`uname`
