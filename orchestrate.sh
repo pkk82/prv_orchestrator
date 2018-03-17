@@ -107,19 +107,19 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-java.sh
 . orchestrate-java-jce-policy.sh
 . orchestrate-ant.sh
-#. orchestrate-kotlin.sh
-#. orchestrate-maven.sh
-#. orchestrate-maven-settings.sh
-#. orchestrate-maven-toolchains.sh
+. orchestrate-kotlin.sh
+. orchestrate-maven.sh
+. orchestrate-maven-settings.sh
+. orchestrate-maven-toolchains.sh
 . orchestrate-gradle.sh
-#. orchestrate-scala.sh
-#. orchestrate-kafka.sh
-#. orchestrate-nodejs.sh
-#. orchestrate-vscode.sh
-#. orchestrate-intellij-idea.sh
-#. orchestrate-password.sh
-#. orchestrate-backups-script.sh
-#. orchestrate-postgres.sh
+. orchestrate-scala.sh
+. orchestrate-kafka.sh
+. orchestrate-nodejs.sh
+. orchestrate-vscode.sh
+. orchestrate-intellij-idea.sh
+. orchestrate-password.sh
+. orchestrate-backups-script.sh
+. orchestrate-postgres.sh
 . orchestrate-bashrc.sh
 
 
