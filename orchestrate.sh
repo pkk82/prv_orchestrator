@@ -68,6 +68,7 @@ function createVariables1 {
 			maxVersion=$version
 		fi
 		echo "export $2${version}_HOME=$spec" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+		echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME/bin:\$PATH'" >> $aliasesFile
 	done;
 
 	if [[ "$maxVersion" != "" ]]; then
@@ -92,6 +93,7 @@ function createVariables2 {
 			maxVersion=$version
 		fi
 		echo "export $2${version}_HOME=$spec" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+		echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME/bin:\$PATH'" >> $aliasesFile
 	done;
 
 	if [[ "$maxVersion" != "" ]]; then
