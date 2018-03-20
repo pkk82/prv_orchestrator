@@ -57,7 +57,26 @@ function verify {
 	done
 }
 
-function createVariables {
+function createVariables1 {
+	maxVersionToCompare=0
+	maxVersion=""
+	familyDir=$pfDir/$1
+	echo "# $1" >> $varFile
+	for spec in `ls -d $familyDir/* 2>/dev/null`; do
+		version=$(eval " echo $spec | $3")
+		if [[ $version -gt $maxVersion ]]; then
+			maxVersion=$version
+		fi
+		echo "export $2${version}_HOME=$spec" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+	done;
+
+	if [[ "$maxVersion" != "" ]]; then
+		echo "export $2_HOME=\$$2${maxVersion}_HOME" >> $varFile
+		echo "export PATH=\$$2_HOME/bin:\$PATH" >> $varFile
+	fi
+}
+
+function createVariables2 {
 	maxVersionToCompare=0
 	maxVersion=""
 	familyDir=$pfDir/$1
@@ -80,6 +99,8 @@ function createVariables {
 		echo "export PATH=\$$2_HOME/bin:\$PATH" >> $varFile
 	fi
 }
+
+
 
 # calculate system
 osname=`uname`

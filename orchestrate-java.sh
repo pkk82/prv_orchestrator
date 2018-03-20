@@ -60,20 +60,6 @@ for specJava in `ls -d $javaDir/jdk-*`; do
 done
 
 #add java variables
-maxVersion=0
-echo "# java" >> $varFile
-for specJava in `ls -d $javaDir/jdk-*`; do
-	expectedJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'.' -f2)
-	if [[ $expectedJavaVersion -gt $maxVersion ]]; then
-		maxVersion=$expectedJavaVersion
-	else
-		sed -i /JAVA${expectedJavaVersion}_HOME=/d $varFile
-	fi
-	echo "export JAVA${expectedJavaVersion}_HOME=$specJava" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-done;
-echo "export JAVA_HOME=\$JAVA${maxVersion}_HOME" >> $varFile
-echo "export PATH=\$JAVA_HOME/bin:\$PATH" >> $varFile
-. $varFile
-
+createVariables1 java JAVA "awk -F- '{print \$(NF-1)}' | cut -d'.' -f2"
 
 
