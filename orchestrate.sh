@@ -48,6 +48,10 @@ function verify {
 	familyDir=$pfDir/$1
 	for spec in `ls -d $familyDir/*`; do
 		expectedVersion=$(echo $spec | awk -F/ '{print $(NF)}' | sed "s/$1-\(.*\)/\1/")
+		minor=$(echo $expectedVersion | cut -d. -f2)
+		if [ ! -z ${3+x} ]; then
+			eval $3
+		fi
 		actualVersion=$(eval $spec/$2)
 		if [[ $actualVersion == "$expectedVersion" ]]; then
 			echo -e "${GREEN}$1 version is correct - $actualVersion${NC}"
