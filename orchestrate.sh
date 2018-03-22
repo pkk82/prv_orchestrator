@@ -29,17 +29,32 @@ function unzipFamily {
 }
 
 
-function copyFamily {
+function copyFamilyAsFiles {
 	familyDir=$pfDir/$1
 	makeDir $familyDir
-	for jar in `ls -d $cloudDir/$1/$1*`; do
-		fileName=$(echo $jar | awk -F/ '{print $(NF)}')
+	for file in `ls -d $cloudDir/$1/$1*`; do
+		fileName=$(echo $file | awk -F/ '{print $(NF)}')
 		destFile=$familyDir/$fileName
 		if [ -f "$destFile" ]; then
 			echo -e "${CYAN}File $destFile exists - skipping${NC}"
 		else
-			cp $jar $familyDir
+			cp $file $familyDir
 			echo "$fileName copied to $familyDir"
+		fi
+	done
+}
+
+function copyFamilyAsDirs {
+	familyDir=$pfDir/$1
+	makeDir $familyDir
+	for dir in `ls -d $cloudDir/$1/$1*`; do
+		dirName=$(echo $dir | awk -F/ '{print $(NF)}')
+		destDir=$familyDir/$dirName
+		if [ -d "$destDir" ]; then
+			echo -e "${CYAN}Directory $destDir exists - skipping${NC}"
+		else
+			cp -R $dir ${familyDir%/}
+			echo -e "${GREEN}$destDir copied to $familyDir${NC}"
 		fi
 	done
 }
@@ -168,6 +183,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-gradle.sh
 . orchestrate-scala.sh
 . orchestrate-clojure.sh
+. orchestrate-leiningen.sh
 . orchestrate-kafka.sh
 . orchestrate-nodejs.sh
 . orchestrate-vscode.sh
