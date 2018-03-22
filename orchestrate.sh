@@ -87,12 +87,20 @@ function createVariables1 {
 			maxVersion=$version
 		fi
 		echo "export $2${version}_HOME=$spec" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-		echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME/bin:\$PATH'" >> $aliasesFile
+		if [ -d "$spec/bin" ]; then
+			echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME/bin:\$PATH'" >> $aliasesFile
+		else
+			echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME:\$PATH'" >> $aliasesFile
+		fi
 	done;
 
 	if [[ "$maxVersion" != "" ]]; then
 		echo "export $2_HOME=\$$2${maxVersion}_HOME" >> $varFile
-		echo "export PATH=\$$2_HOME/bin:\$PATH" >> $varFile
+		if [ -d "$spec/bin" ]; then
+			echo "export PATH=\$$2_HOME/bin:\$PATH" >> $varFile
+		else
+			echo "export PATH=\$$2_HOME:\$PATH" >> $varFile
+		fi
 	fi
 }
 
@@ -112,12 +120,20 @@ function createVariables2 {
 			maxVersion=$version
 		fi
 		echo "export $2${version}_HOME=$spec" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-		echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME/bin:\$PATH'" >> $aliasesFile
+		if [ -d "$spec/bin" ]; then
+			echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME/bin:\$PATH'" >> $aliasesFile
+		else
+			echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME:\$PATH'" >> $aliasesFile
+		fi
 	done;
 
 	if [[ "$maxVersion" != "" ]]; then
 		echo "export $2_HOME=\$$2${maxVersion}_HOME" >> $varFile
-		echo "export PATH=\$$2_HOME/bin:\$PATH" >> $varFile
+		if [ -d "$spec/bin" ]; then
+			echo "export PATH=\$$2_HOME/bin:\$PATH" >> $varFile
+		else
+			echo "export PATH=\$$2_HOME:\$PATH" >> $varFile
+		fi
 	fi
 }
 
