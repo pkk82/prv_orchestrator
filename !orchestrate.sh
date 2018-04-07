@@ -36,6 +36,16 @@ else
 	exit
 fi
 
+# validate git
+validateGit=`git --version 2>&1`
+if [[ "$validateGit" == *"git version"* ]]; then
+	echo -e "${GREEN}git found${NC}"
+else
+	echo -e "${RED}git not found${NC}"
+	sudo apt-get install git
+fi
+
+
 # copy file to dropbox
 me=`basename "$0"`
 dest="$cloudDir/$me"
