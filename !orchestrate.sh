@@ -45,6 +45,22 @@ else
 	sudo apt-get install git
 fi
 
+# set git username
+gitUserDefault=`git config --list | grep user.name | cut -d= -f2`
+echo -e -n "${CYAN}Enter git user name${NC} ($gitUserDefault): "
+read gitUser
+gitUser=${gitUser:-$gitUserDefault}
+git config --global user.name $gitUser
+
+# set git user email
+gitEmailDefault=`git config --list | grep user.email | cut -d= -f2`
+echo -e -n "${CYAN}Enter git user email${NC} ($gitEmailDefault): "
+read gitEmail
+gitEmail=${gitEmail:-$gitEmailDefault}
+git config --global user.email $gitEmail
+
+# set auto rebase for git
+git config --global pull.rebase true
 
 # copy file to dropbox
 me=`basename "$0"`
