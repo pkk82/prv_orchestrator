@@ -62,6 +62,15 @@ git config --global user.email $gitEmail
 # set auto rebase for git
 git config --global pull.rebase true
 
+# ssh key
+if [ -f "$HOME/.ssh/id_rsa" ]; then
+	echo -e "${GREEN}private key found${NC}"
+else
+	echo -e "${CYAN}private key not exist - generating one${NC}"
+	ssh-keygen -C $gitUser -f $HOME/.ssh/id_rsa -N ""
+fi
+
+
 # copy file to dropbox
 me=`basename "$0"`
 dest="$cloudDir/$me"
