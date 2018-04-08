@@ -37,13 +37,14 @@ done
 #verify java
 javaDir=$pfDir/java
 for specJava in `ls -d $javaDir/jdk-*`; do
+	echo -e "${CYAN}Verifying $specJava${NC}"
 	# verify version
 	expectedJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | tr 'u' '_')
 	actualJavaVersion=$($specJava/bin/java -version 2>&1 | grep -i version)
 	if [[ $actualJavaVersion == *"$expectedJavaVersion"* ]]; then
-		echo -e "${GREEN}Java version is correct - $actualJavaVersion${NC}"
+		echo -e "    ${GREEN}Java version is correct - $actualJavaVersion${NC}"
 	else
-		echo -e "${RED}Java version is not correct - expected: $expectedJavaVersion, got: $actualJavaVersion${NC}"
+		echo -e "    ${RED}Java version is not correct - expected: $expectedJavaVersion, got: $actualJavaVersion${NC}"
 	fi
 	#verify platform
 	expectedPlatform=$(echo $specJava | awk -F- '{print $NF}')
@@ -53,9 +54,9 @@ for specJava in `ls -d $javaDir/jdk-*`; do
 		actualPlatform="i586"
 	fi
 	if [ "$expectedPlatform" == "$actualPlatform" ]; then
-		echo -e "${GREEN}Java platform is correct - $actualPlatform${NC}" 
+		echo -e "    ${GREEN}Java platform is correct - $actualPlatform${NC}"
 	else
-		echo -e "${RED}Java platform is not correct - expected: $expectedPlatform, got: $actualPlatform${NC}" 
+		echo -e "    ${RED}Java platform is not correct - expected: $expectedPlatform, got: $actualPlatform${NC}"
 	fi
 done
 
