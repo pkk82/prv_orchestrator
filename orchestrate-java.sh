@@ -76,6 +76,6 @@ for specJava in `ls -d $javaDir/jdk-*`; do
 done
 
 #add java variables
-createVariables1 java JAVA "awk -F- '{print \$(NF-1)}' | cut -d'.' -f2"
+createVariables1 java JAVA "awk -F- '{print \$(NF-1)}' | awk -F_ '{print \$1}'"
 
 
