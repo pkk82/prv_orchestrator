@@ -46,8 +46,17 @@ for specJava in `ls -d $javaDir/jdk-*`; do
 	echo -e "${CYAN}Verifying $specJava${NC}"
 	# verify version
 	expectedJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | tr 'u' '_')
-	actualJavaVersion=$($specJava/bin/java -version 2>&1 | grep -i version)
-	if [[ $actualJavaVersion == *"$expectedJavaVersion"* ]]; then
+	actualJavaVersion=$($specJava/bin/java -version 2>&1 | grep -i version | awk '{print $3}' | tr -d '"')
+
+	major=`echo $expectedJavaVersion | awk -F_ '{print $1}'`
+	patch=`echo $expectedJavaVersion | awk -F_ '{print $2}'`
+	if [[ "$actualJavaVersion" =~ [0-9]+\.[0-9]+\.[0-9]+_[0-9]+ ]]; then
+		expectedJavaVersion="1.$major.0_$patch"
+	elif [[ "$actualJavaVersion" =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
+		expectedJavaVersion="$major.0.$patch"
+	fi
+
+	if [[ $actualJavaVersion == "$expectedJavaVersion" ]]; then
 		echo -e "    ${GREEN}Java version is correct - $actualJavaVersion${NC}"
 	else
 		echo -e "    ${RED}Java version is not correct - expected: $expectedJavaVersion, got: $actualJavaVersion${NC}"
