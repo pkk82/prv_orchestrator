@@ -2,11 +2,14 @@
 
 # copy gradle to pf
 unzipFamily gradle
+
+### verify gradle works with Java 8
+currentJavaVersion=$JAVA_HOME
+JAVA_HOME=$JAVA8_HOME
 verify gradle "bin/gradle --version | grep Gradle | awk '{print \$2}'"
 
 gradleDir=$pfDir/gradle
 ## verify gradle with appropriate Java version
-currentJavaVersion=$JAVA_HOME
 for specGradle in `ls -d $gradleDir/*`; do
 	gradleVersion=$(echo $specGradle | awk -F/ '{print $(NF)}' | sed 's/gradle-\(.*\)/\1/')
 	major=$(echo $gradleVersion | cut -d'.' -f1)
