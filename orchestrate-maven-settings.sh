@@ -40,6 +40,10 @@ EOL
 	read -s artifactoryCloudPassword
 	encryptedArtifactoryCloudPassword=$($MVN_HOME/bin/mvn --encrypt-password $artifactoryCloudPassword)
 
+	echo -e -n "\n${CYAN}Nexus (pkk82@nexus.pkk82.pl) password: ${NC}"
+	read -s nexusCloudPassword
+	encryptedNexusCloudPassword=$($MVN_HOME/bin/mvn --encrypt-password $nexusCloudPassword)
+
 	echo -e -n "\n${CYAN}Docker (pkk82@docker.io) password: ${NC}"
 	read -s dockerIoPassword
 	encryptedDockerIoPassword=$($MVN_HOME/bin/mvn --encrypt-password $dockerIoPassword)
@@ -75,6 +79,21 @@ cat > $mvnSettings << EOL
 			<username>pkk82</username>
 			<password>$encryptedArtifactoryCloudPassword</password>
 		</server>
+		<server>
+			<id>pkk82-nexus</id>
+			<username>pkk82</username>
+			<password>$encryptedNexusCloudPassword</password>
+		</server>
+		<server>
+			<id>pkk82-nexus-snapshots</id>
+			<username>pkk82</username>
+			<password>$encryptedNexusCloudPassword</password>
+		</server>
+		<server>
+			<id>pkk82-nexus-releases</id>
+			<username>pkk82</username>
+			<password>$encryptedNexusCloudPassword</password>
+		</server>
 	</servers>
 	<profiles>
 		<profile>
@@ -97,10 +116,6 @@ cat > $mvnSettings << EOL
 					<url>https://47.91.91.114:8444/artifactory/pkk82-mvn-repo-release</url>
 				</repository>
 			</repositories>
-			<properties>
-				<repo.release.id>pkk82-artifactory-alibaba-cloud-release</repo.release.id>
-				<repo.release.url>https://47.91.91.114:8444/artifactory/pkk82-mvn-repo-release</repo.release.url>
-			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
@@ -113,9 +128,55 @@ cat > $mvnSettings << EOL
 					<url>https://47.91.91.114:8444/artifactory/pkk82-mvn-repo-snapshot</url>
 				</repository>
 			</repositories>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>repo-pkk82-nexus</id>
+			<repositories>
+				<repository>
+					<id>pkk82-nexus</id>
+					<url>https://pkk82.pl/nexus/repository/maven-group</url>
+				</repository>
+			</repositories>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>repo-pkk82-nexus-snapshots</id>
+			<repositories>
+				<repository>
+					<id>pkk82-nexus-snapshots</id>
+					<url>https://pkk82.pl/nexus/repository/maven-snapshots</url>
+					<snapshots>
+						<enabled>true</enabled>
+					</snapshots>
+				</repository>
+			</repositories>
 			<properties>
-				<repo.snapshot.id>pkk82-artifactory-alibaba-cloud-snapshot</repo.snapshot.id>
-				<repo.snapshot.url>https://47.91.91.114:8444/artifactory/pkk82-mvn-repo-snapshot</repo.snapshot.url>
+				<repo.snapshot.id>pkk82-nexus-snapshots</repo.snapshot.id>
+				<repo.snapshot.url>https://pkk82.pl/nexus/repository/maven-snapshots</repo.snapshot.url>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>repo-pkk82-nexus-releases</id>
+			<repositories>
+				<repository>
+					<id>pkk82-nexus-releases</id>
+					<url>https://pkk82.pl/nexus/repository/maven-releases</url>
+					<releases>
+						<enabled>true</enabled>
+					</releases>
+				</repository>
+			</repositories>
+			<properties>
+				<repo.release.id>pkk82-nexus-releases</repo.release.id>
+				<repo.release.url>https://pkk82.pl/nexus/repository/maven-releases</repo.release.url>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
