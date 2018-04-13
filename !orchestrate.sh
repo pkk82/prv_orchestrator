@@ -23,6 +23,7 @@ read cloudDir
 cloudDir=${cloudDir:-$cloudDirDefault}
 
 # validate sudo
+echo -e "${CYAN}Check if `whoami` belongs to sudo${NC}"
 validateSudo=`sudo -v 2>&1`
 
 if [ "$validateSudo" == "" ]; then
@@ -36,6 +37,20 @@ else
 	exit
 fi
 
+
+# grab user details
+userDefault=`whoami`
+echo -e -n "${CYAN}Enter username${NC} ($userDefault): "
+read user
+user=${user:-userDefault}
+
+# grab host
+hostDefault=`hostname`
+echo -e -n "${CYAN}Enter hostname${NC} ($hostDefault): "
+read host
+host=${host:-hostDefault}
+
+
 # validate git
 validateGit=`git --version 2>&1`
 if [[ "$validateGit" == *"git version"* ]]; then
@@ -47,6 +62,10 @@ fi
 
 # set git username
 gitUserDefault=`git config --list | grep user.name | cut -d= -f2`
+if [ "$gitUserDefault" == "" ]; then
+	gitUserDefault="$user@$host"
+fi
+
 echo -e -n "${CYAN}Enter git user name${NC} ($gitUserDefault): "
 read gitUser
 gitUser=${gitUser:-$gitUserDefault}
