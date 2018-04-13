@@ -157,7 +157,7 @@ fi
 echo -e "${GREEN}Detected system: $system${NC}"
 
 # calculate cloud dir
-cloudDirDefault="$mainDir/vd/GoogleDrive/software"
+cloudDirDefault="$mainDir/vd/Dropbox/software"
 echo -e -n "${CYAN}Enter path to software directory${NC} ($cloudDirDefault): "
 read cloudDir
 cloudDir=${cloudDir:-$cloudDirDefault}
