@@ -42,7 +42,7 @@ fi
 userDefault=`whoami`
 echo -e -n "${CYAN}Enter username${NC} ($userDefault): "
 read user
-user=${user:-userDefault}
+user=${user:-$userDefault}
 
 # grab host
 hostDefault=`hostname`
@@ -95,6 +95,15 @@ if [ -f "/usr/bin/curl" ]; then
 else
 	echo -e "${RED}curl not found${NC}"
 	sudo apt-get install curl
+fi
+
+# bitbucket
+echo -e "${CYAN}Check bitbucket ssh key${NC}"
+checkSshKey=`curl -X GET -u pkk82 https://api.bitbucket.org/2.0/users/pkk82/ssh-keys | python -m json.tool | grep label | grep "$user@$host"`
+if [ "$checkSshKey" == "" ]; then
+	echo -e "${RED}Public key not found${NC}"
+else
+	echo -e "${GREEN}Public key found${NC}"
 fi
 
 # copy file to dropbox
