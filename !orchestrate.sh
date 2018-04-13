@@ -70,6 +70,13 @@ else
 	ssh-keygen -C $gitUser -f $HOME/.ssh/id_rsa -N ""
 fi
 
+# curl
+if [ -f "/usr/bin/curl" ]; then
+	echo -e "${GREEN}curl found${NC}"
+else
+	echo -e "${RED}curl not found${NC}"
+	sudo apt-get install curl
+fi
 
 # copy file to dropbox
 me=`basename "$0"`
