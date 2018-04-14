@@ -48,7 +48,7 @@ user=${user:-$userDefault}
 hostDefault=`hostname`
 echo -e -n "${CYAN}Enter hostname${NC} ($hostDefault): "
 read host
-host=${host:-hostDefault}
+host=${host:-$hostDefault}
 
 
 # validate git
@@ -99,9 +99,14 @@ fi
 
 # bitbucket
 echo -e "${CYAN}Check bitbucket ssh key${NC}"
-checkSshKey=`curl -X GET -u pkk82 https://api.bitbucket.org/2.0/users/pkk82/ssh-keys | python -m json.tool | grep label | grep "$user@$host"`
+bitbucketSshUrl="https://api.bitbucket.org/2.0/users/pkk82/ssh-keys"
+bitbucketUser="pkk82"
+checkSshKey=`curl -X GET -u $bitbucketUser $bitbucketSshUrl | python -m json.tool | grep label | grep "$user@$host"`
 if [ "$checkSshKey" == "" ]; then
 	echo -e "${RED}Public key not found${NC}"
+	echo -e "${CYAN}Adding public key${NC}"
+	publicKey=`cat "$HOME/.ssh/id_rsa.pub" | tr -d '\n'`
+	curl -X POST -u $bitbucketUser -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"label\": \"$user@$host\"}" $bitbucketSshUrl
 else
 	echo -e "${GREEN}Public key found${NC}"
 fi
