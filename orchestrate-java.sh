@@ -2,17 +2,49 @@
 # copy java to pf
 javaDir=$pfDir/java
 makeDir $javaDir
-for javaTgz in `ls -d $cloudDir/java/$system/*.tar.gz 2>/dev/null`; do
-	tarDir=$(tar -tf $javaTgz | head -n 1)
-	tarDir=${tarDir%/}
-	destFolder=$(basename $javaTgz | sed 's/\.tar\.gz//g' | sed "s/-$system//g")
-	if [ -d "$javaDir/$destFolder" ]; then
-		echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
+
+currentDir=`pwd`
+rm -rf /tmp/*
+for javaBinPath in `ls -d $cloudDir/java/$system-new/*bin 2>/dev/null`; do
+	javaBin=`basename $javaBinPath`
+	destDir=`echo $javaBin | sed 's/\.bin//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed "s/-$system//g"`
+	cp $javaBinPath /tmp/$javaBin
+	chmod u+x /tmp/$javaBin
+	workingDir="/tmp/$destDir"
+	mkdir $workingDir
+  cd $workingDir
+	/tmp/$javaBin
+	javaFile=`find "$workingDir" -name "java" 2>/dev/null | head -n 1`
+
+	if [ -f "$javaFile" ]; then
+		if [ -d "$javaDir/$destDir" ]; then
+			echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
+		else
+			dirName=`ls $workingDir`
+			mkdir $javaDir/$destDir
+			cp -r $workingDir/$dirName/* $javaDir/$destDir/
+		fi
 	else
-		tar -zxf $javaTgz --transform "s/$tarDir/$destFolder/" -C $javaDir
-		echo "$javaTgz extracted to $javaDir"
+			echo -e "${RED}$workingDir does not contain java${NC}"
 	fi
+
+
+
 done
+cd $currentDir
+
+
+# for javaTgz in `ls -d $cloudDir/java/$system/*.tar.gz 2>/dev/null`; do
+# 	tarDir=$(tar -tf $javaTgz | head -n 1)
+# 	tarDir=${tarDir%/}
+# 	destFolder=$(basename $javaTgz | sed 's/\.tar\.gz//g' | sed "s/-$system//g")
+# 	if [ -d "$javaDir/$destFolder" ]; then
+# 		echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
+# 	else
+# 		tar -zxf $javaTgz --transform "s/$tarDir/$destFolder/" -C $javaDir
+# 		echo "$javaTgz extracted to $javaDir"
+# 	fi
+# done
 
 for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
 	mountDir=`hdiutil attach $javaDmg | awk 'FNR==2{print substr($0, index($0, $3))}'`;
@@ -77,5 +109,3 @@ done
 
 #add java variables
 createVariables1 java JAVA "awk -F- '{print \$(NF-1)}' | awk -F_ '{print \$1}'"
-
-
