@@ -6,7 +6,6 @@ makeDir $javaDir
 if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ]; then
 
 	currentDir=`pwd`
-	rm -rf /tmp/*
 	for javaBinPath in `ls -d $cloudDir/java/$system-bin/*bin 2>/dev/null`; do
 
 		javaBin=`basename $javaBinPath`
@@ -17,22 +16,26 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
 		fi
 
 		destDir=`echo $javaBin | sed 's/\.bin//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed "s/-$system//g"`
+
+		if [ -d "$javaDir/$destDir" ]; then
+			echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
+			continue
+		fi
+
+		rm -rf /tmp/$javaBin
 		cp $javaBinPath /tmp/$javaBin
 		chmod u+x /tmp/$javaBin
 		workingDir="/tmp/$destDir"
+		rm -rf $workingDir
 		mkdir $workingDir
 	  cd $workingDir
 		/tmp/$javaBin
 		javaFile=`find "$workingDir" -name "java" 2>/dev/null | head -n 1`
 
 		if [ -f "$javaFile" ]; then
-			if [ -d "$javaDir/$destDir" ]; then
-				echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
-			else
-				dirName=`ls $workingDir`
-				mkdir $javaDir/$destDir
-				cp -r $workingDir/$dirName/* $javaDir/$destDir/
-			fi
+			dirName=`ls $workingDir`
+			mkdir $javaDir/$destDir
+			cp -r $workingDir/$dirName/* $javaDir/$destDir/
 		else
 				echo -e "${RED}$workingDir does not contain java${NC}"
 		fi
