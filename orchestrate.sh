@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-NC='\033[0m'; RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'
+NC='\033[0m'; RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'; BOLD="\033[1m"
 
 function makeDir {
 	if [ -d $1 ]; then
 		echo -e "${CYAN}Dir $1 already exists${NC}"
 	elif mkdir -p $1; then
-		echo -e "${GREEN}Dir $1 created${NC}" 
+		echo -e "${GREEN}Dir $1 created${NC}"
 	else
 		echo -e "${RED}Dir $1 not created${NC}"
 		exit
@@ -137,7 +137,11 @@ function createVariables2 {
 	fi
 }
 
-
+function askYN {
+	read -p "$(echo -e "$CYAN$1 [y/n]$NC ($2): ")" answer
+	local answer=${answer:-$2}
+	echo "$answer"
+}
 
 # calculate system
 osname=`uname`
@@ -208,5 +212,3 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-backups-script.sh
 . orchestrate-postgres.sh
 . orchestrate-bashrc.sh
-
-
