@@ -106,15 +106,21 @@ javaDir=$pfDir/java
 for specJava in `ls -d $javaDir/jdk-*`; do
 	echo -e "${CYAN}Verifying $specJava${NC}"
 	# verify version
-	expectedJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | tr 'u' '_')
 	actualJavaVersion=$($specJava/bin/java -version 2>&1 | grep -i version | awk '{print $3}' | tr -d '"')
 
-	major=`echo $expectedJavaVersion | awk -F_ '{print $1}'`
-	patch=`echo $expectedJavaVersion | awk -F_ '{print $2}'`
+	expectedJavaVersion=`echo $specJava | awk -F- '{print $(NF-1)}'`
+	majorMinor=`echo $expectedJavaVersion | awk -Fu '{print $1}'`
+	patch=`echo $expectedJavaVersion | awk -Fu '{print $2}'`
+	major=`echo $majorMinor | awk -F. '{print $1}'`
+	minor=`echo $majorMinor | awk -F. '{print $2}'`
+	if [ "$minor" == "" ]; then
+		minor="0"
+	fi
+	patch=`echo $expectedJavaVersion | awk -Fu '{print $2}'`
 	if [[ "$actualJavaVersion" =~ [0-9]+\.[0-9]+\.[0-9]+_[0-9]+ ]]; then
-		expectedJavaVersion="1.$major.0_$patch"
+		expectedJavaVersion="1.$major.${minor}_$patch"
 	elif [[ "$actualJavaVersion" =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
-		expectedJavaVersion="$major.0.$patch"
+		expectedJavaVersion="$major.$minor.$patch"
 	fi
 
 	if [[ $actualJavaVersion == "$expectedJavaVersion" ]]; then
