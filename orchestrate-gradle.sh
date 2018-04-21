@@ -5,7 +5,7 @@ unzipFamily gradle
 
 ### verify gradle works with Java 8
 currentJavaVersion=$JAVA_HOME
-JAVA_HOME=$JAVA8_HOME
+JAVA_HOME=$JAVA8_x64_HOME
 verify gradle "bin/gradle --version | grep Gradle | awk '{print \$2}'"
 
 gradleDir=$pfDir/gradle
@@ -14,14 +14,14 @@ for specGradle in `ls -d $gradleDir/*`; do
 	gradleVersion=$(echo $specGradle | awk -F/ '{print $(NF)}' | sed 's/gradle-\(.*\)/\1/')
 	major=$(echo $gradleVersion | cut -d'.' -f1)
 
-	if (( major <= 1 )) && [ ! -z $JAVA5_HOME ]; then
-		JAVA_HOME=$JAVA5_HOME
-	elif (( major <= 2 )) && [ ! -z $JAVA6_HOME ]; then
-		JAVA_HOME=$JAVA6_HOME
-	elif (( major <= 3 )) && [ ! -z $JAVA7_HOME ]; then
-		JAVA_HOME=$JAVA7_HOME
+	if (( major <= 1 )) && [ ! -z $JAVA5_x64_HOME ]; then
+		JAVA_HOME=$JAVA5_x64_HOME
+	elif (( major <= 2 )) && [ ! -z $JAVA6_x64_HOME ]; then
+		JAVA_HOME=$JAVA6_x64_HOME
+	elif (( major <= 3 )) && [ ! -z $JAVA7_x64_HOME ]; then
+		JAVA_HOME=$JAVA7_x64_HOME
 	else
-		JAVA_HOME=$JAVA7_HOME
+		JAVA_HOME=$JAVA7_x64_HOME
 	fi
 
 	# verify version with specific java version
