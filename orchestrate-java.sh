@@ -88,7 +88,7 @@ for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
 	if [ "$patchVersion" == "" ]; then
 		destFolder=jdk-${majorVersion}-x64
 	else
-		destFolder=jdk-${majorVersion}_${patchVersion}-x64
+		destFolder=jdk-${majorVersion}u${patchVersion}-x64
 	fi
 	if [ -d "$javaDir/$destFolder" ]; then
 		echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
