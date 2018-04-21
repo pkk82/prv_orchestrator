@@ -110,7 +110,8 @@ javaDir=$pfDir/java
 for specJava in `ls -d $javaDir/jdk-*`; do
 	echo -e "${CYAN}Verifying $specJava${NC}"
 	# verify version
-	actualJavaVersion=$($specJava/bin/java -version 2>&1 | grep -i version | awk '{print $3}' | tr -d '"')
+	javaOutput=`$specJava/bin/java -version 2>&1`
+	actualJavaVersion=`echo $javaOutput | grep -i version | awk '{print $3}' | tr -d '"'`
 
 	expectedJavaVersion=`echo $specJava | awk -F- '{print $(NF-1)}'`
 	majorMinor=`echo $expectedJavaVersion | awk -Fu '{print $1}'`
@@ -133,8 +134,8 @@ for specJava in `ls -d $javaDir/jdk-*`; do
 		echo -e "    ${RED}Java version is not correct - expected: $expectedJavaVersion, got: $actualJavaVersion${NC}"
 	fi
 	#verify platform
-	expectedPlatform=$(echo $specJava | awk -F- '{print $NF}')
-	is64=$($specJava/bin/java -version 2>&1 | grep -i "64-Bit")
+	expectedPlatform=`echo $specJava | awk -F- '{print $NF}'`
+	is64=`echo $javaOutput -version 2>&1 | grep -i "64-Bit"`
 	actualPlatform="x64"
 	if [ "$is64" == ""  ]; then
 		actualPlatform="i586"
