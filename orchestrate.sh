@@ -113,6 +113,7 @@ function createVariables2 {
 			echo "export PATH=\$$2_HOME:\$PATH" >> $varFile
 		fi
 	fi
+	. $varFile
 }
 
 function askYN {
