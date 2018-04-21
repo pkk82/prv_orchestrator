@@ -5,7 +5,7 @@ makeDir $javaDir
 
 
 function calculateDestFolderName {
-	destFolder=`echo $1 | sed 's/\.bin//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed "s/-$system//g"`
+	destFolder=`echo $1 | sed 's/\.bin//g' | sed 's/\.tar\.gz//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed "s/-$system//g"`
 	echo $destFolder
 }
 
@@ -66,17 +66,18 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
 	cd $currentDir
 fi
 
-# for javaTgz in `ls -d $cloudDir/java/$system/*.tar.gz 2>/dev/null`; do
-# 	tarDir=$(tar -tf $javaTgz | head -n 1)
-# 	tarDir=${tarDir%/}
-# 	destFolder=$(basename $javaTgz | sed 's/\.tar\.gz//g' | sed "s/-$system//g")
-# 	if [ -d "$javaDir/$destFolder" ]; then
-# 		echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
-# 	else
-# 		tar -zxf $javaTgz --transform "s/$tarDir/$destFolder/" -C $javaDir
-# 		echo "$javaTgz extracted to $javaDir"
-# 	fi
-# done
+for javaTgzPath in `ls -d $cloudDir/java/$system/*.tar.gz 2>/dev/null`; do
+	tarDir=`tar -tf $javaTgzPath | head -n 1 | awk -F/ '{print $1}'`
+	tarDir=${tarDir%/}
+	javaTgz=`basename $javaTgzPath`
+	destFolder=`calculateDestFolderName $javaTgz`
+	if [ -d "$javaDir/$destFolder" ]; then
+		echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
+	else
+		tar -zxf $javaTgzPath --transform "s/$tarDir/$destFolder/" -C $javaDir
+		echo "$javaTgzPath extracted to $javaDir"
+	fi
+done
 
 for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
 	mountDir=`hdiutil attach $javaDmg | awk 'FNR==2{print substr($0, index($0, $3))}'`;
