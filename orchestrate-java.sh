@@ -3,6 +3,12 @@
 javaDir=$pfDir/java
 makeDir $javaDir
 
+
+function calculateDestFolderName {
+	destFolder=`echo $1 | sed 's/\.bin//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed "s/-$system//g"`
+	echo $destFolder
+}
+
 if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ]; then
 
 	currentDir=`pwd`
@@ -15,7 +21,7 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
 			continue
 		fi
 
-		destDir=`echo $javaBin | sed 's/\.bin//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed "s/-$system//g"`
+		destDir=`calculateDestFolderName $javaBin`
 		version=`echo $destDir | awk -F- '{print $2}'`
 
 		if [[ "$version" =~ [0-9]+_[0-9]+_[0-9]+_[0-9]+ ]]; then
@@ -59,9 +65,6 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
 	done
 	cd $currentDir
 fi
-
-
-
 
 # for javaTgz in `ls -d $cloudDir/java/$system/*.tar.gz 2>/dev/null`; do
 # 	tarDir=$(tar -tf $javaTgz | head -n 1)
