@@ -2,7 +2,7 @@
 # copy policy to java
 javaDir=$pfDir/java
 securityPath="jre/lib/security"
-for jceZip in `ls -d $cloudDir/java/jce-policy/*.zip`; do
+for jceZip in `ls -d $cloudDir/java/jce-policy/*.zip 2>/dev/null`; do
 	javaVersionFromPolicy=$(echo $jceZip | awk -F/ '{print $(NF)}' | sed 's/jce_policy-\(.*\).zip/\1/');
 	for specJava in `ls -d $javaDir/jdk-*`; do
 		javaVersion=$(echo $specJava | awk -F/ '{print $(NF)}' | awk -F- '{print $(NF-1)}' | cut -d'.' -f2)
@@ -26,6 +26,3 @@ for jceZip in `ls -d $cloudDir/java/jce-policy/*.zip`; do
 		fi
 	done
 done
-
-
-
