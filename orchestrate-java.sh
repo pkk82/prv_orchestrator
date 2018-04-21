@@ -147,4 +147,4 @@ for specJava in `ls -d $javaDir/jdk-*`; do
 done
 
 #add java variables
-createVariables1 java JAVA "awk -F- '{print \$(NF-1)}' | awk -F_ '{print \$1}'"
+createVariables2 java JAVA "sed 's/jdk-//g' | sed 's/\.\?[0-9]*u[0-9]*//g' | sed 's/-i586/.x32/g' | sed 's/-x64/.x64/g'"

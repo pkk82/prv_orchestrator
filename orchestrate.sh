@@ -76,51 +76,29 @@ function verify {
 	done
 }
 
-function createVariables1 {
-	maxVersionToCompare=0
-	maxVersion=""
-	familyDir=$pfDir/$1
-	echo "# $1" >> $varFile
-	for spec in `ls -d $familyDir/* 2>/dev/null`; do
-		version=$(eval " echo $spec | $3")
-		if [[ $version -gt $maxVersion ]]; then
-			maxVersion=$version
-		fi
-		echo "export $2${version}_HOME=$spec" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-		if [ -d "$spec/bin" ]; then
-			echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME/bin:\$PATH'" >> $aliasesFile
-		else
-			echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME:\$PATH'" >> $aliasesFile
-		fi
-	done;
-
-	if [[ "$maxVersion" != "" ]]; then
-		echo "export $2_HOME=\$$2${maxVersion}_HOME" >> $varFile
-		if [ -d "$spec/bin" ]; then
-			echo "export PATH=\$$2_HOME/bin:\$PATH" >> $varFile
-		else
-			echo "export PATH=\$$2_HOME:\$PATH" >> $varFile
-		fi
-	fi
-}
-
 function createVariables2 {
 	maxVersionToCompare=0
 	maxVersion=""
 	familyDir=$pfDir/$1
 	echo "# $1" >> $varFile
-	for spec in `ls -d $familyDir/* 2>/dev/null`; do
-		version=$(echo $spec | awk -F- '{print $NF}')
+	for specPath in `ls -d $familyDir/* 2>/dev/null`; do
+		spec=`basename $specPath`
+		if [ "$3" == "" ]; then
+			version=$(echo $spec | awk -F- '{print $NF}')
+		else
+			version=$(eval " echo $spec | $3")
+		fi
 		majorVersion=$(echo $version | cut -d. -f1)
 		minorVersion=$(echo $version | cut -d. -f2)
 		version=${majorVersion}_${minorVersion}
-		versionToCompare=$((10000 * $majorVersion + $minorVersion))
+		minorVersionNumber=`echo $minorVersion | sed s/[a-z]*//g`
+		versionToCompare=$((10000 * $majorVersion + $minorVersionNumber))
 		if [[ $versionToCompare -gt $maxVersionToCompare ]]; then
 			maxVersionToCompare=$versionToCompare
 			maxVersion=$version
 		fi
-		echo "export $2${version}_HOME=$spec" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-		if [ -d "$spec/bin" ]; then
+		echo "export $2${version}_HOME=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+		if [ -d "$specPath/bin" ]; then
 			echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME/bin:\$PATH'" >> $aliasesFile
 		else
 			echo "alias use-$1-${version}='export $2_HOME=\$$2${version}_HOME; export PATH=\$$2_HOME:\$PATH'" >> $aliasesFile
@@ -129,7 +107,7 @@ function createVariables2 {
 
 	if [[ "$maxVersion" != "" ]]; then
 		echo "export $2_HOME=\$$2${maxVersion}_HOME" >> $varFile
-		if [ -d "$spec/bin" ]; then
+		if [ -d "$specPath/bin" ]; then
 			echo "export PATH=\$$2_HOME/bin:\$PATH" >> $varFile
 		else
 			echo "export PATH=\$$2_HOME:\$PATH" >> $varFile
