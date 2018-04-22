@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 
-makeDir $intellijHomeDir/config/options
-jdkTableXmlFile=$intellijHomeDir/config/options/jdk.table.xml
+if [ "$system" = "mac" ]; then
+  makeDir $intellijHomeDir/options
+  jdkTableXmlFile=$intellijHomeDir/options/jdk.table.xml
+else
+  makeDir $intellijHomeDir/config/options
+  jdkTableXmlFile=$intellijHomeDir/config/options/jdk.table.xml
+fi
 
 cat > $jdkTableXmlFile << EOL
 <application>
@@ -10,15 +15,15 @@ EOL
 
 javaDir=$pfDir/java
 for specJava in `ls -d $javaDir/*`; do
-	fullJavaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | tr 'u' '_')
-	javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'.' -f2)
+	javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}')
 	platform=$(echo $specJava | awk -F- '{print $NF}')
+
 cat >> $jdkTableXmlFile << EOL
 
     <jdk version="2">
-      <name value="1.$javaVersion $platform" />
+      <name value="$javaVersion $platform" />
       <type value="JavaSDK" />
-      <version value="java version &quot;$fullJavaVersion&quot;" />
+      <version value="java version &quot;$javaVersion&quot;" />
       <homePath value="$specJava" />
       <roots>
         <annotationsPath>
@@ -30,11 +35,21 @@ cat >> $jdkTableXmlFile << EOL
           <root type="composite">
 EOL
 
-	for jarFile in `find $specJava/jre -name \*.jar`; do
+# before java 9
+for jarFile in `find $specJava/jre -name \*.jar 2>/dev/null`; do
 cat >> $jdkTableXmlFile << EOL
             <root type="simple" url="jar://$jarFile!/" />
 EOL
-	done
+done
+
+# after java 8
+for jmodFilePath in `find $specJava/jmods -name \*.jmod 2>/dev/null`; do
+    jmodFile=`basename $jmodFilePath | sed 's/\.jmod//g'`
+cat >> $jdkTableXmlFile << EOL
+          <root type="simple" url="jrt://$specJava!/$jmodFile" />
+EOL
+done
+
 
 cat >> $jdkTableXmlFile << EOL
           </root>
@@ -46,11 +61,23 @@ cat >> $jdkTableXmlFile << EOL
           <root type="composite">
 EOL
 
-	for zipFile in `ls -f $specJava/*.zip`; do
+# before java 9
+for zipFile in `ls -f $specJava/*.zip 2>/dev/null`; do
 cat >> $jdkTableXmlFile << EOL
             <root type="simple" url="jar://$zipFile!/" />
 EOL
-	done
+done
+
+# after java 8
+srcFile="$specJava/lib/src.zip"
+if [ -f "$srcFile" ]; then
+inZip=`zipinfo -1  "$srcFile" | awk -F/ '{print $1}' | uniq`
+for path in $inZip; do
+cat >> $jdkTableXmlFile << EOL
+            <root type="simple" url="jar://$srcFile!/$path" />
+EOL
+done
+fi
 
 cat >> $jdkTableXmlFile << EOL
           </root>
