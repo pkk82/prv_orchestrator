@@ -85,42 +85,10 @@ cat > $mvnSettings << EOL
 					<url>https://pkk82.pl/nexus/repository/maven-group</url>
 				</repository>
 			</repositories>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-		</profile>
-		<profile>
-			<id>repo-pkk82-nexus-snapshots</id>
-			<repositories>
-				<repository>
-					<id>pkk82-nexus-snapshots</id>
-					<url>https://pkk82.pl/nexus/repository/maven-snapshots</url>
-					<snapshots>
-						<enabled>true</enabled>
-					</snapshots>
-				</repository>
-			</repositories>
 			<properties>
 				<repo.snapshot.id>pkk82-nexus-snapshots</repo.snapshot.id>
 				<repo.snapshot.url>https://pkk82.pl/nexus/repository/maven-snapshots</repo.snapshot.url>
-			</properties>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-		</profile>
-		<profile>
-			<id>repo-pkk82-nexus-releases</id>
-			<repositories>
-				<repository>
-					<id>pkk82-nexus-releases</id>
-					<url>https://pkk82.pl/nexus/repository/maven-releases</url>
-					<releases>
-						<enabled>true</enabled>
-					</releases>
-				</repository>
-			</repositories>
-			<properties>
-				<repo.release.id>pkk82-nexus-releases</repo.release.id>
+				repo.release.id>pkk82-nexus-releases</repo.release.id>
 				<repo.release.url>https://pkk82.pl/nexus/repository/maven-releases</repo.release.url>
 			</properties>
 			<activation>
