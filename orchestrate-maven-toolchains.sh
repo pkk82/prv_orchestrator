@@ -15,7 +15,7 @@ EOL
 javaDir=$pfDir/java
 for specJava in `ls -d $javaDir/*`; do
 
-  javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}')
+  javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'u' -f1)
   platform=$(echo $specJava | awk -F- '{print $NF}')
 
   if [ "$system" == "windows" ]; then
