@@ -5,8 +5,15 @@ makeDir $dtoolDir
 
 if [ `askYN "Configure dtool" "n"` == "y" ]; then
 
-  for dtoolPath in `ls -d $cloudDir/dtool/*.zip 2>/dev/null`; do
-    unzip -q $dtoolPath -d $dtoolDir
-  done
+  unzipFamily dtool
+
+  latest=`ls -d $dtoolDir/dtool-* | sort | tail -n 1 2>/dev/null`
+  echo "export DTOOL_HOME=$latest" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+  echo "export PATH=\$DTOOL_HOME/bin:\$PATH" >> $varFile
 
 fi
+
+
+
+
+
