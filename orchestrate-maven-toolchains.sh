@@ -15,10 +15,8 @@ EOL
 javaDir=$pfDir/java
 for specJava in `ls -d $javaDir/*`; do
 
-  javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | tr 'u' '_')
+  javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}')
   platform=$(echo $specJava | awk -F- '{print $NF}')
-  major=$(echo $javaVersion | cut -d'.' -f1)
-  minor=$(echo $javaVersion | cut -d'.' -f2)
 
   if [ "$system" == "windows" ]; then
     finalPath=$(echo $specJava | sed 's|/c|c:|g' | sed 's|/|\\|g')
@@ -31,7 +29,7 @@ cat >> $toolchains << EOL
     <toolchain>
         <type>jdk</type>
         <provides>
-            <version>${major}.${minor}</version>
+            <version>${javaVersion}</version>
             <vendor>sun</vendor>
             <platform>$platform</platform>
         </provides>
