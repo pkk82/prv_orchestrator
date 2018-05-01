@@ -13,6 +13,15 @@ if [ "$configureIntellij" == "y" ]; then
 	echo -e -n "${CYAN}Enter path to intellij home directory${NC}: "
 	read intellijHomeDir
 	makeDir $intellijHomeDir
+
+	if [ "$system" = "mac" ]; then
+	  intellijOptionsDir=$intellijHomeDir/options
+	else
+	  intellijOptionsDir=$intellijHomeDir/config/options
+	fi
+	makeDir $intellijOptionsDir
+
 	. intellij-idea/jdk-table.sh
+	. intellij-idea/general.sh
 
 fi;

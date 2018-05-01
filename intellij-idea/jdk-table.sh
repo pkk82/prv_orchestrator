@@ -1,12 +1,6 @@
 #!/usr/bin/env bash
 
-if [ "$system" = "mac" ]; then
-  makeDir $intellijHomeDir/options
-  jdkTableXmlFile=$intellijHomeDir/options/jdk.table.xml
-else
-  makeDir $intellijHomeDir/config/options
-  jdkTableXmlFile=$intellijHomeDir/config/options/jdk.table.xml
-fi
+jdkTableXmlFile=$intellijOptionsDir/jdk.table.xml
 
 cat > $jdkTableXmlFile << EOL
 <application>
