@@ -86,6 +86,7 @@ cat > $mvnSettings << EOL
                 </repository>
             </repositories>
             <properties>
+                <repo.url>https://pkk82.pl/nexus</repo.url>
                 <repo.snapshot.id>pkk82-nexus-snapshots</repo.snapshot.id>
                 <repo.snapshot.url>https://pkk82.pl/nexus/repository/maven-snapshots</repo.snapshot.url>
                 <repo.release.id>pkk82-nexus-releases</repo.release.id>
