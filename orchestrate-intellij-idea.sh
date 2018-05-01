@@ -18,10 +18,12 @@ if [ "$configureIntellij" == "y" ]; then
 	  intellijOptionsDir=$intellijHomeDir/options
 	else
 	  intellijOptionsDir=$intellijHomeDir/config/options
+		intellijKeymapsDir=$intellijHomeDir/config/keymaps
 	fi
 	makeDir $intellijOptionsDir
+	makeDir $intellijKeymapsDir
 
 	. intellij-idea/jdk-table.sh
 	. intellij-idea/general.sh
-
+	. intellij-idea/keymap.sh
 fi;
