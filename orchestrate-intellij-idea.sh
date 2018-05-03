@@ -31,8 +31,8 @@ if [ "$configureIntellij" == "y" ]; then
 	makeDir $intellijOptionsDir
 	makeDir $intellijKeymapsDir
 
-	. intellij-idea/jdk-table.sh
-	. intellij-idea/general.sh
-	. intellij-idea/keymap.sh
-	. intellij-idea/editor.sh
+	for shFile in `ls ./intellij-idea/*.sh`; do
+		. $shFile
+	done
+
 fi;
