@@ -12,3 +12,13 @@ cat > $editorFile << EOL
   </component>
 </application>
 EOL
+
+editorFile=$intellijOptionsDir/editor.codeinsight.xml
+
+cat > $editorFile << EOL
+<application>
+  <component name="DaemonCodeAnalyzerSettings">
+    <option name="SHOW_METHOD_SEPARATORS" value="true" />
+  </component>
+</application>
+EOL
