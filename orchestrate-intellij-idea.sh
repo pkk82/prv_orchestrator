@@ -7,11 +7,19 @@ configureIntellij=${configureIntellij:-$configureIntellijDefault}
 
 if [ "$configureIntellij" == "y" ]; then
 
-	existingDirs=$(ls -d $HOME/.IntelliJIdea* $HOME/.intellij-idea* $HOME/Library/Preferences/IntelliJIdea* 2>/dev/null)
+	existingDirs=`ls -d $HOME/.IntelliJIdea* $HOME/.intellij-idea* $HOME/Library/Preferences/IntelliJIdea* 2>/dev/null`
+	intellijHomeDirDefault=`ls -d $HOME/.IntelliJIdea* $HOME/.intellij-idea* $HOME/Library/Preferences/IntelliJIdea* 2>/dev/null | sort | tail -n 1`
+
 	echo "Existing Intellij Idea directories:"
 	echo "$existingDirs"
-	echo -e -n "${CYAN}Enter path to intellij home directory${NC}: "
+	if [ "$intellijHomeDirDefault" == "" ]; then
+		echo -e -n "${CYAN}Enter path to intellij home directory${NC}: "
+	else
+		echo -e -n "${CYAN}Enter path to intellij home directory${NC} ($intellijHomeDirDefault): "
+	fi
+
 	read intellijHomeDir
+	intellijHomeDir=${intellijHomeDir:-$intellijHomeDirDefault}
 	makeDir $intellijHomeDir
 
 	if [ "$system" = "mac" ]; then
