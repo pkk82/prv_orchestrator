@@ -34,4 +34,5 @@ if [ "$configureIntellij" == "y" ]; then
 	. intellij-idea/jdk-table.sh
 	. intellij-idea/general.sh
 	. intellij-idea/keymap.sh
+	. intellij-idea/editor.sh
 fi;
