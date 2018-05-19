@@ -188,6 +188,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-nodejs.sh
 . orchestrate-vscode.sh
 . orchestrate-intellij-idea.sh
+. orchestrate-atom.sh
 . orchestrate-password.sh
 . orchestrate-backups-script.sh
 . orchestrate-postgres.sh
