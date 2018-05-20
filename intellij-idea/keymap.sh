@@ -27,6 +27,9 @@ cat > $intellijKeymapsDir/keymap-gnome.xml << EOL
   <action id="Maven.ReimportProject">
     <keyboard-shortcut first-keystroke="shift ctrl alt r" />
   </action>
+  <action id="CloseAllEditors">
+    <keyboard-shortcut first-keystroke="shift ctrl alt 4" />
+  </action>
 </keymap>
 EOL
 
@@ -38,6 +41,9 @@ cat > $intellijKeymapsDir/keymap-mac.xml << EOL
   </action>
   <action id="Maven.ReimportProject">
     <keyboard-shortcut first-keystroke="shift ctrl meta r" />
+  </action>
+  <action id="CloseAllEditors">
+    <keyboard-shortcut first-keystroke="shift ctrl meta 4" />
   </action>
 </keymap>
 EOL
