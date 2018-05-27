@@ -39,6 +39,12 @@ cat > $intellijKeymapsDir/keymap-gnome.xml << EOL
   <action id="ShowSettings">
     <keyboard-shortcut first-keystroke="ctrl comma" />
   </action>
+  <action id="Back">
+    <keyboard-shortcut first-keystroke="ctrl alt left" />
+  </action>
+  <action id="Forward">
+    <keyboard-shortcut first-keystroke="ctrl alt right" />
+  </action>
 </keymap>
 EOL
 
@@ -56,6 +62,12 @@ cat > $intellijKeymapsDir/keymap-mac.xml << EOL
   </action>
   <action id="Maven.ReimportProject">
     <keyboard-shortcut first-keystroke="shift ctrl meta r" />
+  </action>
+  <action id="Back">
+    <keyboard-shortcut first-keystroke="ctrl meta left" />
+  </action>
+  <action id="Forward">
+    <keyboard-shortcut first-keystroke="ctrl meta right" />
   </action>
 </keymap>
 EOL
