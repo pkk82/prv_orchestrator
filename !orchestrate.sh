@@ -6,18 +6,15 @@ NC='\033[0m'; RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'
 osname=`uname`
 if [ "$USERPROFILE" != "" ]; then
 	system="windows"
-	mainDir="/c"
 elif [[ "$osname" == "Linux" ]]; then
 	system="linux"
-	mainDir=$HOME
 elif [[ "$osname" == "Darwin" ]]; then
 	system="mac"
-	mainDir=$HOME
 fi
 echo -e "${GREEN}Detected system: $system${NC}"
 
 # detect dropbox directory
-cloudDirDefault="$mainDir/vd/Dropbox/scripts"
+cloudDirDefault="$HOME/vd/Dropbox"
 echo -e -n "${CYAN}Enter path to dropbox${NC} ($cloudDirDefault): "
 read cloudDir
 cloudDir=${cloudDir:-$cloudDirDefault}
@@ -113,7 +110,7 @@ fi
 
 # copy file to dropbox
 me=`basename "$0"`
-dest="$cloudDir/$me"
+dest="$cloudDir/scripts/$me"
 if [ "`pwd`/$me" != "$dest" ]; then
-	cp -f $me $cloudDir/$me
+	cp -f $me $dest
 fi
