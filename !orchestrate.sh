@@ -20,18 +20,20 @@ read cloudDir
 cloudDir=${cloudDir:-$cloudDirDefault}
 
 # validate sudo
-echo -e "${CYAN}Check if `whoami` belongs to sudo${NC}"
-validateSudo=`sudo -v 2>&1`
+if [ "$system" != "windows" ]; then
+  echo -e "${CYAN}Check if `whoami` belongs to sudo${NC}"
+  validateSudo=`sudo -v 2>&1`
 
-if [ "$validateSudo" == "" ]; then
-	echo -e "${GREEN}User `whoami` is in sudo${NC}"
-else
-	echo -e "${RED}User `whoami` is not in sudo${NC}"
-	echo -e "${CYAN}Execute: ${NC}"
-	echo -e "  su -"
-	echo -e "  usermod -a -G sudo `whoami`"
-	echo -e "  shutdown -r"
-	exit
+  if [ "$validateSudo" == "" ]; then
+    echo -e "${GREEN}User `whoami` is in sudo${NC}"
+  else
+    echo -e "${RED}User `whoami` is not in sudo${NC}"
+    echo -e "${CYAN}Execute: ${NC}"
+    echo -e "  su -"
+    echo -e "  usermod -a -G sudo `whoami`"
+    echo -e "  shutdown -r"
+    exit
+  fi
 fi
 
 
