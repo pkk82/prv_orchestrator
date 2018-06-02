@@ -42,7 +42,7 @@ read user
 user=${user:-$userDefault}
 
 # grab host
-hostDefault=`hostname`
+hostDefault=`hostname | sed "s/\.local$//g"`
 echo -e -n "${CYAN}Enter hostname${NC} ($hostDefault): "
 read host
 host=${host:-$hostDefault}
