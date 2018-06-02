@@ -21,3 +21,12 @@ else
 	echo "  . $aliasesFile" >> $rcFile
 	echo "fi" >> $rcFile
 fi
+
+if grep -q "$functionsFile" "$rcFile"; then
+	echo -e "${GREEN}$rcFile loads $functionsFile${NC}"
+else
+	echo -e "${CYAN}modifying $rcFile to load $functionsFile${NC}"
+	echo "if [ -f $functionsFile ]; then" >> $rcFile
+	echo "  . $functionsFile" >> $rcFile
+	echo "fi" >> $rcFile
+fi

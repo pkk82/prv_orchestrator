@@ -168,6 +168,7 @@ makeDir $pfDir
 rcFile="$HOME/.bashrc"
 aliasesFile="$HOME/.bash_aliases"
 varFile="$HOME/.bash_variables"
+functionsFile="$HOME/.bash_functions"
 echo "export CLOUD_SOFTWARE_DIR=$cloudDirDefault" > $varFile
 echo "export PF_DIR=$pfDir" >> $varFile
 
@@ -192,4 +193,5 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-password.sh
 . orchestrate-backups-script.sh
 . orchestrate-postgres.sh
+. orchestrate-functions.sh
 . orchestrate-bashrc.sh
