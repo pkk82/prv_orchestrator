@@ -88,6 +88,33 @@ else
 	ssh-keygen -C $gitUser -f $HOME/.ssh/id_rsa -N ""
 fi
 
+# gpg
+gpgKeys=`gpg --list-keys`
+if [ "$gpgKeys" == "" ]; then
+  export GNUPGHOME="$HOME/.gnupg"
+  read -s -p "$(echo -e "${CYAN}Enter gpg password$NC: ")" gpgPassword
+  printf "\n"
+  rm /tmp/key
+  cat > /tmp/key << EOF
+%echo Generating a default key
+Key-Type: RSA
+Key-Length: 4096
+Subkey-Type: RSA
+Subkey-Length: 4096
+Name-Real: $gitUser
+Name-Email: $gitEmail
+Expire-Date: 0
+Passphrase: $gpgPassword
+# Do a commit here, so that we can later print "done" :-)
+%commit
+%echo done
+EOF
+  gpg --batch --gen-key /tmp/key
+  rm /tmp/key
+else
+  echo -e "${GREEN}Found gpg keys: $gpgKeys${NC}"
+fi
+
 # curl
 if [ -f "/usr/bin/curl" ]; then
 	echo -e "${GREEN}curl found${NC}"
