@@ -44,6 +44,10 @@ EOL
   read -s dockerIoPassword
   encryptedDockerIoPassword=$($MVN_HOME/bin/mvn --encrypt-password $dockerIoPassword)
 
+  echo -e -n "\n${CYAN}Local gpg password: ${NC}"
+  read -s gpgKeyPassphrase
+  encryptedGpgKeyPassphrase=$($MVN_HOME/bin/mvn --encrypt-password $gpgKeyPassphrase)
+
 cat > $mvnSettings << EOL
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
@@ -75,6 +79,10 @@ cat > $mvnSettings << EOL
             <username>pkk82</username>
             <password>$encryptedNexusCloudPassword</password>
         </server>
+        <server>
+            <id>gpg</id>
+            <passphrase>$encryptedGpgKeyPassphrase</passphrase>
+        </server>
     </servers>
     <profiles>
         <profile>
@@ -91,6 +99,15 @@ cat > $mvnSettings << EOL
                 <repo.snapshot.url>https://pkk82.pl/nexus/repository/maven-snapshots</repo.snapshot.url>
                 <repo.release.id>pkk82-nexus-releases</repo.release.id>
                 <repo.release.url>https://pkk82.pl/nexus/repository/maven-releases</repo.release.url>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>gpg</id>
+            <properties>
+                <gpg.passphraseServerId>gpg</gpg.passphraseServerId>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
