@@ -123,32 +123,75 @@ else
 	sudo apt-get install curl
 fi
 
+
+# public keys
+publicKey=`cat "$HOME/.ssh/id_rsa.pub" | tr -d '\n' | awk '{print $1 " " $2}'`
+label="$user@$host"
+
 # bitbucket
 echo -e "${CYAN}Check bitbucket ssh key${NC}"
 bitbucketUser="pkk82"
-publicKey=`cat "$HOME/.ssh/id_rsa.pub" | tr -d '\n'`
 bitbucketSshUrl="https://api.bitbucket.org/2.0/users/$bitbucketUser/ssh-keys"
-checkSshKey=`curl -X GET -u $bitbucketUser $bitbucketSshUrl | python -m json.tool | grep label | grep "$user@$host"`
-if [ "$checkSshKey" == "" ]; then
-	echo -e "${RED}Public key not found${NC}"
-	echo -e "${CYAN}Adding public key${NC}"
-	curl -X POST -u $bitbucketUser -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"label\": \"$user@$host\"}" $bitbucketSshUrl
+serverKeys=`curl -X GET -u "$bitbucketUser" "$bitbucketSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin)["values"]: print "" + str(e["uuid"]) + " " + e["label"] + " " + e["key"]'`
+labelAndKeyExists=`echo "$serverKeys" | grep "$label" | grep "$publicKey"`
+labelExists=`echo "$serverKeys" | grep "$label"`
+keyExists=`echo "$serverKeys" | grep "$publicKey"`
+
+echo $labelExists
+echo $keyExists
+echo $labelAndKeyExists
+
+if [ "$labelAndKeyExists" != "" ]; then
+  echo -e "${GREEN}Public key found${NC}"
 else
-	echo -e "${GREEN}Public key found${NC}"
+  echo -e "${RED}Public key not found${NC}"
+
+  if [ "$keyExists" != "" ]; then
+    oldLabel=`echo "$serverKeys" | grep "$publicKey" | awk '{print $2}'`
+    id=`echo "$serverKeys" | grep "$publicKey" | awk '{print $1}'`
+    echo -e "${CYAN}Removing public key with label $oldLabel${NC}"
+    curl -X DELETE -u "$bitbucketUser" "$bitbucketSshUrl/$id"
+  fi
+
+  if [ "$labelExists" != "" ]; then
+    id=`echo "$serverKeys" | grep "$label" | awk '{print $1}'`
+    echo -e "${CYAN}Removing public key with label $label${NC}"
+    curl -X DELETE -u "$bitbucketUser" "$bitbucketSshUrl/$id"
+  fi
+
+  echo -e "${CYAN}Adding public key${NC}"
+  curl -X POST -u "$bitbucketUser" -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"label\": \"$label\"}" $bitbucketSshUrl
 fi
 
 # github
 echo -e "${CYAN}Check github ssh key${NC}"
 gitHubUser="pkk82"
 gitHubSshUrl="https://api.github.com/user/keys"
-checkSshKey=`curl -X GET -u $gitHubUser "$gitHubSshUrl" | python -m json.tool | grep title | grep "$user@$host"`
-if [ "$checkSshKey" == "" ]; then
-  echo -e "${RED}Public key not found${NC}"
-  echo -e "${CYAN}Adding public key${NC}"
-  publicKey=`cat "$HOME/.ssh/id_rsa.pub" | tr -d '\n'`
-  curl -X POST -u $gitHubUser -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"title\": \"$user@$host\"}" $gitHubSshUrl
-else
+serverKeys=`curl -X GET -u $gitHubUser "$gitHubSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin): print "" + str(e["id"]) + " " + e["title"] + " " + e["key"]'`
+labelAndKeyExists=`echo "$serverKeys" | grep "$label" | grep "$publicKey"`
+labelExists=`echo "$serverKeys" | grep "$label"`
+keyExists=`echo "$serverKeys" | grep "$publicKey"`
+
+if [ "$labelAndKeyExists" != "" ]; then
   echo -e "${GREEN}Public key found${NC}"
+else
+  echo -e "${RED}Public key not found${NC}"
+
+  if [ "$keyExists" != "" ]; then
+    oldLabel=`echo "$serverKeys" | grep "$publicKey" | awk '{print $2}'`
+    id=`echo "$serverKeys" | grep "$publicKey" | awk '{print $1}'`
+    echo -e "${CYAN}Removing public key with label $oldLabel${NC}"
+    curl -X DELETE -u "$gitHubUser" "$gitHubSshUrl/$id"
+  fi
+
+  if [ "$labelExists" != "" ]; then
+    id=`echo "$serverKeys" | grep "$label" | awk '{print $1}'`
+    echo -e "${CYAN}Removing public key with label $label${NC}"
+    curl -X DELETE -u "$gitHubUser" "$gitHubSshUrl/$id"
+  fi
+
+  echo -e "${CYAN}Adding public key${NC}"
+  curl -X POST -u "$gitHubUser" -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"title\": \"$label\"}" $gitHubSshUrl
 fi
 
 # copy file to dropbox
