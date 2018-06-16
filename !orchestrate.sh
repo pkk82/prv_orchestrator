@@ -125,16 +125,30 @@ fi
 
 # bitbucket
 echo -e "${CYAN}Check bitbucket ssh key${NC}"
-bitbucketSshUrl="https://api.bitbucket.org/2.0/users/pkk82/ssh-keys"
 bitbucketUser="pkk82"
+publicKey=`cat "$HOME/.ssh/id_rsa.pub" | tr -d '\n'`
+bitbucketSshUrl="https://api.bitbucket.org/2.0/users/$bitbucketUser/ssh-keys"
 checkSshKey=`curl -X GET -u $bitbucketUser $bitbucketSshUrl | python -m json.tool | grep label | grep "$user@$host"`
 if [ "$checkSshKey" == "" ]; then
 	echo -e "${RED}Public key not found${NC}"
 	echo -e "${CYAN}Adding public key${NC}"
-	publicKey=`cat "$HOME/.ssh/id_rsa.pub" | tr -d '\n'`
 	curl -X POST -u $bitbucketUser -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"label\": \"$user@$host\"}" $bitbucketSshUrl
 else
 	echo -e "${GREEN}Public key found${NC}"
+fi
+
+# github
+echo -e "${CYAN}Check github ssh key${NC}"
+gitHubUser="pkk82"
+gitHubSshUrl="https://api.github.com/user/keys"
+checkSshKey=`curl -X GET -u $gitHubUser "$gitHubSshUrl" | python -m json.tool | grep title | grep "$user@$host"`
+if [ "$checkSshKey" == "" ]; then
+  echo -e "${RED}Public key not found${NC}"
+  echo -e "${CYAN}Adding public key${NC}"
+  publicKey=`cat "$HOME/.ssh/id_rsa.pub" | tr -d '\n'`
+  curl -X POST -u $gitHubUser -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"title\": \"$user@$host\"}" $gitHubSshUrl
+else
+  echo -e "${GREEN}Public key found${NC}"
 fi
 
 # copy file to dropbox
