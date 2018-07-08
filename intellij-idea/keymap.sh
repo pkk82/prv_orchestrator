@@ -24,6 +24,7 @@ cat > $intellijKeymapsDir/keymap-gnome.xml << EOL
   <action id="CloseAllEditors">
     <keyboard-shortcut first-keystroke="shift ctrl alt 4" />
   </action>
+  <action id="DatabaseView.OpenDdlInConsole" />
   <action id="ImportModule">
     <keyboard-shortcut first-keystroke="shift ctrl alt o" />
   </action>
@@ -32,6 +33,9 @@ cat > $intellijKeymapsDir/keymap-gnome.xml << EOL
   </action>
   <action id="Maven.ReimportProject">
    <keyboard-shortcut first-keystroke="shift ctrl alt r" />
+  </action>
+  <action id="OpenInBrowser">
+    <keyboard-shortcut first-keystroke="shift ctrl alt b" />
   </action>
   <action id="ShowProjectStructureSettings">
     <keyboard-shortcut first-keystroke="ctrl semicolon" />
@@ -54,6 +58,7 @@ cat > $intellijKeymapsDir/keymap-mac.xml << EOL
   <action id="CloseAllEditors">
     <keyboard-shortcut first-keystroke="shift ctrl meta 4" />
   </action>
+  <action id="DatabaseView.OpenDdlInConsole" />
   <action id="ImportModule">
     <keyboard-shortcut first-keystroke="shift ctrl meta o" />
   </action>
@@ -62,6 +67,9 @@ cat > $intellijKeymapsDir/keymap-mac.xml << EOL
   </action>
   <action id="Maven.ReimportProject">
     <keyboard-shortcut first-keystroke="shift ctrl meta r" />
+  </action>
+  <action id="OpenInBrowser">
+    <keyboard-shortcut first-keystroke="shift ctrl alt b" />
   </action>
   <action id="Back">
     <keyboard-shortcut first-keystroke="ctrl meta left" />
