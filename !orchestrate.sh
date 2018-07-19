@@ -138,10 +138,6 @@ labelAndKeyExists=`echo "$serverKeys" | grep "$label" | grep "$publicKey"`
 labelExists=`echo "$serverKeys" | grep "$label"`
 keyExists=`echo "$serverKeys" | grep "$publicKey"`
 
-echo $labelExists
-echo $keyExists
-echo $labelAndKeyExists
-
 if [ "$labelAndKeyExists" != "" ]; then
   echo -e "${GREEN}Public key found${NC}"
 else
