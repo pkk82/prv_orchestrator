@@ -116,7 +116,8 @@ else
 fi
 
 # curl
-if [ -f "/usr/bin/curl" ]; then
+curlTest=`curl 2>&1`
+if [[ -f "/usr/bin/curl" || "$curlTest" == "curl:"* ]]; then
 	echo -e "${GREEN}curl found${NC}"
 else
 	echo -e "${RED}curl not found${NC}"
