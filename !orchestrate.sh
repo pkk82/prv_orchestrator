@@ -133,7 +133,7 @@ label="$user@$host"
 echo -e "${CYAN}Check bitbucket ssh key${NC}"
 bitbucketUser="pkk82"
 bitbucketSshUrl="https://api.bitbucket.org/2.0/users/$bitbucketUser/ssh-keys"
-serverKeys=`curl -X GET -u "$bitbucketUser" "$bitbucketSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin)["values"]: print "" + str(e["uuid"]) + " " + e["label"] + " " + e["key"]'`
+serverKeys=`curl -X GET -u "$bitbucketUser" "$bitbucketSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin)["values"]: print(str(e["uuid"]) + " " + e["label"] + " " + e["key"])'`
 labelAndKeyExists=`echo "$serverKeys" | grep "$label" | grep "$publicKey"`
 labelExists=`echo "$serverKeys" | grep "$label"`
 keyExists=`echo "$serverKeys" | grep "$publicKey"`
@@ -168,7 +168,7 @@ fi
 echo -e "${CYAN}Check github ssh key${NC}"
 gitHubUser="pkk82"
 gitHubSshUrl="https://api.github.com/user/keys"
-serverKeys=`curl -X GET -u $gitHubUser "$gitHubSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin): print "" + str(e["id"]) + " " + e["title"] + " " + e["key"]'`
+serverKeys=`curl -X GET -u $gitHubUser "$gitHubSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin): print(str(e["id"]) + " " + e["title"] + " " + e["key"])'`
 labelAndKeyExists=`echo "$serverKeys" | grep "$label" | grep "$publicKey"`
 labelExists=`echo "$serverKeys" | grep "$label"`
 keyExists=`echo "$serverKeys" | grep "$publicKey"`
