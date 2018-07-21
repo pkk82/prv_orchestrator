@@ -1,5 +1,43 @@
 #!/usr/bin/env bash
-NC='\033[0m'; RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'; BOLD="\033[1m"
+NC='\033[0m'; YELLOW='\033[0;33m'; GREEN='\033[0;32m'; BLUE='\033[0;34m'; CYAN='\033[0;36m'; RED='\033[0;31m'
+
+function actionMessage {
+  echo -e "${BLUE}$1${NC}"
+}
+
+function queryMessage {
+  echo -e "${CYAN}$1${NC}: "
+}
+
+function queryMessageWithDefault {
+  echo -e "${CYAN}$1${NC} ($2): "
+}
+
+function positiveMessage {
+  echo -e "${GREEN}$1${NC}"
+}
+
+function warningMessage {
+  echo -e "${YELLOW}$1${NC}"
+}
+
+
+function askPassword {
+  read -s -p "$(queryMessage "$1")" password
+  echo "$password"
+}
+
+function askWithDefault {
+  read -p "$(queryMessageWithDefault "$1" "$2")" answer
+  local answer=${answer:-$2}
+  echo "$answer"
+}
+
+function askYN {
+  read -p "$(queryMessageWithDefault "$1 [y/n]" "$2")" answer
+  local answer=${answer:-$2}
+  echo "$answer"
+}
 
 function makeDir {
 	if [ -d $1 ]; then
@@ -116,11 +154,7 @@ function createVariables2 {
 	. $varFile
 }
 
-function askYN {
-	read -p "$(echo -e "$CYAN$1 [y/n]$NC ($2): ")" answer
-	local answer=${answer:-$2}
-	echo "$answer"
-}
+
 
 # calculate system
 osname=`uname`
