@@ -17,15 +17,9 @@ for specJava in `ls -d $javaDir/*`; do
 
   javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'u' -f1)
   platform=$(echo $specJava | awk -F- '{print $NF}')
+  finalPath=`backslashWhenWindows $specJava`
 
-  if [ "$system" == "windows" ]; then
-    finalPath=$(echo $specJava | sed 's|/c|c:|g' | sed 's|/|\\|g')
-  else
-    finalPath=$specJava
-  fi
-
-
-cat >> $toolchains << EOL
+  cat >> $toolchains << EOL
     <toolchain>
         <type>jdk</type>
         <provides>

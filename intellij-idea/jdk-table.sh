@@ -9,16 +9,16 @@ EOL
 
 javaDir=$pfDir/java
 for specJava in `ls -d $javaDir/*`; do
-	javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}')
-	platform=$(echo $specJava | awk -F- '{print $NF}')
+  javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}')
+  platform=$(echo $specJava | awk -F- '{print $NF}')
+  finalSpecJava=`driveNotationWhenWindows "$specJava"`
 
-cat >> $jdkTableXmlFile << EOL
-
+  cat >> $jdkTableXmlFile << EOL
     <jdk version="2">
       <name value="$javaVersion $platform" />
       <type value="JavaSDK" />
       <version value="java version &quot;$javaVersion&quot;" />
-      <homePath value="$specJava" />
+      <homePath value="$finalSpecJava" />
       <roots>
         <annotationsPath>
           <root type="composite">
@@ -29,23 +29,24 @@ cat >> $jdkTableXmlFile << EOL
           <root type="composite">
 EOL
 
-# before java 9
-for jarFile in `find $specJava/jre -name \*.jar 2>/dev/null`; do
-cat >> $jdkTableXmlFile << EOL
-            <root type="simple" url="jar://$jarFile!/" />
+  # before java 9
+  for jarFile in `find $specJava/jre -name \*.jar 2>/dev/null`; do
+    finalJarFile=`driveNotationWhenWindows "$jarFile"`
+    cat >> $jdkTableXmlFile << EOL
+            <root type="simple" url="jar://$finalJarFile!/" />
 EOL
-done
+  done
 
-# after java 8
-for jmodFilePath in `find $specJava/jmods -name \*.jmod 2>/dev/null`; do
+  # after java 8
+  for jmodFilePath in `find $specJava/jmods -name \*.jmod 2>/dev/null`; do
     jmodFile=`basename $jmodFilePath | sed 's/\.jmod//g'`
-cat >> $jdkTableXmlFile << EOL
-          <root type="simple" url="jrt://$specJava!/$jmodFile" />
+    cat >> $jdkTableXmlFile << EOL
+          <root type="simple" url="jrt://$finalSpecJava!/$jmodFile" />
 EOL
-done
+  done
 
 
-cat >> $jdkTableXmlFile << EOL
+  cat >> $jdkTableXmlFile << EOL
           </root>
         </classPath>
         <javadocPath>
@@ -55,25 +56,27 @@ cat >> $jdkTableXmlFile << EOL
           <root type="composite">
 EOL
 
-# before java 9
-for zipFile in `ls -f $specJava/*.zip 2>/dev/null`; do
-cat >> $jdkTableXmlFile << EOL
-            <root type="simple" url="jar://$zipFile!/" />
+  # before java 9
+  for zipFile in `ls -f $specJava/*.zip 2>/dev/null`; do
+    finalZipFile=`driveNotationWhenWindows "$zipFile"`
+    cat >> $jdkTableXmlFile << EOL
+            <root type="simple" url="jar://$finalZipFile!/" />
 EOL
-done
+  done
 
-# after java 8
-srcFile="$specJava/lib/src.zip"
-if [ -f "$srcFile" ]; then
-inZip=`zipinfo -1  "$srcFile" | awk -F/ '{print $1}' | uniq`
-for path in $inZip; do
-cat >> $jdkTableXmlFile << EOL
-            <root type="simple" url="jar://$srcFile!/$path" />
+  # after java 8
+  srcFile="$specJava/lib/src.zip"
+  if [ -f "$srcFile" ]; then
+    inZip=`zipinfo -1  "$srcFile" | awk -F/ '{print $1}' | uniq`
+    finalSrcFile=`driveNotationWhenWindows "$srcFile"`
+    for path in $inZip; do
+      cat >> $jdkTableXmlFile << EOL
+            <root type="simple" url="jar://$finalSrcFile!/$path" />
 EOL
-done
-fi
+    done
+  fi
 
-cat >> $jdkTableXmlFile << EOL
+  cat >> $jdkTableXmlFile << EOL
           </root>
         </sourcePath>
       </roots>
@@ -83,7 +86,6 @@ cat >> $jdkTableXmlFile << EOL
 EOL
 
 done
-
 
 cat >> $jdkTableXmlFile << EOL
   </component>

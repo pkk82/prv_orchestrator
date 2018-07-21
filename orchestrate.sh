@@ -154,7 +154,23 @@ function createVariables2 {
 	. $varFile
 }
 
+function backslashWhenWindows {
+  if [ "$system" == "windows" ]; then
+    finalPath=$(echo "$1" | sed 's|/c|c:|g' | sed 's|/|\\|g')
+  else
+    finalPath="$1"
+  fi
+  echo "$finalPath"
+}
 
+function driveNotationWhenWindows {
+  if [ "$system" == "windows" ]; then
+    finalPath=$(echo "$1" | sed 's|/c|c:|g')
+  else
+    finalPath="$1"
+  fi
+  echo "$finalPath"
+}
 
 # calculate system
 osname=`uname`
@@ -204,21 +220,21 @@ echo "export CLOUD_SOFTWARE_DIR=$cloudDirDefault" > $varFile
 echo "export PF_DIR=$pfDir" >> $varFile
 
 . orchestrate-aliases.sh
-. orchestrate-java.sh
-. orchestrate-java-jce-policy.sh
-. orchestrate-dtool.sh
-. orchestrate-ant.sh
-. orchestrate-kotlin.sh
-. orchestrate-maven.sh
-. orchestrate-maven-settings.sh
+#. orchestrate-java.sh
+#. orchestrate-java-jce-policy.sh
+#. orchestrate-dtool.sh
+#. orchestrate-ant.sh
+#. orchestrate-kotlin.sh
+#. orchestrate-maven.sh
+#. orchestrate-maven-settings.sh
 . orchestrate-maven-toolchains.sh
-. orchestrate-gradle.sh
-. orchestrate-scala.sh
-. orchestrate-clojure.sh
-. orchestrate-leiningen.sh
-. orchestrate-kafka.sh
-. orchestrate-nodejs.sh
-. orchestrate-vscode.sh
+#. orchestrate-gradle.sh
+#. orchestrate-scala.sh
+#. orchestrate-clojure.sh
+#. orchestrate-leiningen.sh
+#. orchestrate-kafka.sh
+#. orchestrate-nodejs.sh
+#. orchestrate-vscode.sh
 . orchestrate-intellij-idea.sh
 . orchestrate-atom.sh
 . orchestrate-password.sh
