@@ -1,16 +1,36 @@
 #!/usr/bin/env bash
-NC='\033[0m'; RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'
+NC='\033[0m'; YELLOW='\033[0;33m'; GREEN='\033[0;32m'; BLUE='\033[0;34m'; CYAN='\033[0;36m'
+
+function actionMessage {
+  echo -e "${BLUE}$1${NC}"
+}
+
+function queryMessage {
+  echo -e "${CYAN}$1${NC}: "
+}
+
+function queryMessageWithDefault {
+  echo -e "${CYAN}$1${NC} ($2): "
+}
+
+function positiveMessage {
+  echo -e "${GREEN}$1${NC}"
+}
+
+function warningMessage {
+  echo -e "${YELLOW}$1${NC}"
+}
 
 
 function askPassword {
-  read -s -p "$(echo -e "$CYAN$1$NC: ")" password
+  read -s -p "$(queryMessage "$1")" password
   echo "$password"
 }
 
-function askDir {
-  read -p "$(echo -e "$CYAN$1$NC ($2): ")" dir
-  local dir=${dir:-$2}
-  echo "$dir"
+function askWithDefault {
+  read -p "$(queryMessageWithDefault "$1" "$2")" answer
+  local answer=${answer:-$2}
+  echo "$answer"
 }
 
 # calculate system
@@ -22,21 +42,21 @@ elif [[ "$osname" == "Linux" ]]; then
 elif [[ "$osname" == "Darwin" ]]; then
   system="mac"
 fi
-echo -e "${GREEN}Detected system: $system${NC}"
+positiveMessage "Detected system: $system"
 
 # detect dropbox directory
-cloudDir=`askDir "Enter path to dropbox" "$HOME/vd/Dropbox"`
+cloudDir=`askWithDefault "Enter path to dropbox" "$HOME/vd/Dropbox"`
 
 # validate sudo
 if [ "$system" != "windows" ]; then
-  echo -e "${CYAN}Check if `whoami` belongs to sudo${NC}"
+  actionMessage "Check if `whoami` belongs to sudo"
   validateSudo=`sudo -v 2>&1`
 
   if [ "$validateSudo" == "" ]; then
-    echo -e "${GREEN}User `whoami` is in sudo${NC}"
+    positiveMessage "User `whoami` is in sudo"
   else
-    echo -e "${RED}User `whoami` is not in sudo${NC}"
-    echo -e "${CYAN}Execute: ${NC}"
+    warningMessage "User `whoami` is not in sudo"
+    actionMessage "Execute: "
     echo -e "  su -"
     echo -e "  usermod -a -G sudo `whoami`"
     echo -e "  shutdown -r"
@@ -44,63 +64,53 @@ if [ "$system" != "windows" ]; then
   fi
 fi
 
-
 # grab user details
 userDefault=`whoami`
-echo -e -n "${CYAN}Enter username${NC} ($userDefault): "
-read user
-user=${user:-$userDefault}
+user=`askWithDefault "Enter username" "$userDefault"`
 
 # grab host
 hostDefault=`hostname | sed "s/\.local$//g"`
-echo -e -n "${CYAN}Enter hostname${NC} ($hostDefault): "
-read host
-host=${host:-$hostDefault}
+host=`askWithDefault "Enter hostname" "$hostDefault"`
 
 
 # validate git
 validateGit=`git --version 2>&1`
 if [[ "$validateGit" == *"git version"* ]]; then
-	echo -e "${GREEN}git found${NC}"
+  positiveMessage "git found"
 else
-	echo -e "${RED}git not found${NC}"
-	sudo apt-get install git
+  warningMessage "git not found"
+  sudo apt-get install git
 fi
 
 # set git username
 gitUserDefault=`git config --list | grep user.name | cut -d= -f2`
 if [ "$gitUserDefault" == "" ]; then
-	gitUserDefault="$user@$host"
+  gitUserDefault="$user@$host"
 fi
-
-echo -e -n "${CYAN}Enter git user name${NC} ($gitUserDefault): "
-read gitUser
-gitUser=${gitUser:-$gitUserDefault}
-git config --global user.name $gitUser
+gitUser=`askWithDefault "Enter git user name" "$gitUserDefault"`
+git config --global user.name "$gitUser"
 
 # set git user email
 gitEmailDefault=`git config --list | grep user.email | cut -d= -f2`
-echo -e -n "${CYAN}Enter git user email${NC} ($gitEmailDefault): "
-read gitEmail
-gitEmail=${gitEmail:-$gitEmailDefault}
-git config --global user.email $gitEmail
+gitEmail=`askWithDefault "Enter git user email" "$gitUserDefault"`
+git config --global user.email "$gitEmail"
 
 # set auto rebase for git
 git config --global pull.rebase true
 
 # ssh key
 if [ -f "$HOME/.ssh/id_rsa" ]; then
-	echo -e "${GREEN}private key found${NC}"
+  positiveMessage "private key found"
 else
-	echo -e "${CYAN}private key not exist - generating one${NC}"
-	ssh-keygen -C $gitUser -f $HOME/.ssh/id_rsa -N ""
+  actionMessage "Generating ssh private key"
+  ssh-keygen -C $gitUser -f $HOME/.ssh/id_rsa -N ""
 fi
 
 # gpg
 gpgKeys=`gpg --list-keys`
 if [ "$gpgKeys" == "" ]; then
   export GNUPGHOME="$HOME/.gnupg"
-  read -s -p "$(echo -e "${CYAN}Enter gpg password$NC: ")" gpgPassword
+  gpgPassword=`askPassword "Enter gpg password"`
   printf "\n"
   rm /tmp/key
   cat > /tmp/key << EOF
@@ -120,16 +130,16 @@ EOF
   gpg --batch --gen-key /tmp/key
   rm /tmp/key
 else
-  echo -e "${GREEN}Found gpg keys: $gpgKeys${NC}"
+  positiveMessage "Found gpg keys: $gpgKeys"
 fi
 
 # curl
 curlTest=`curl 2>&1`
 if [[ -f "/usr/bin/curl" || "$curlTest" == "curl:"* ]]; then
-	echo -e "${GREEN}curl found${NC}"
+  positiveMessage "curl found"
 else
-	echo -e "${RED}curl not found${NC}"
-	sudo apt-get install curl
+  warningMessage "curl not found"
+  sudo apt-get install curl
 fi
 
 
@@ -138,7 +148,7 @@ publicKey=`cat "$HOME/.ssh/id_rsa.pub" | tr -d '\n' | awk '{print $1 " " $2}'`
 label="$user@$host"
 
 # bitbucket
-echo -e "${CYAN}Check bitbucket ssh key${NC}"
+actionMessage "Checking bitbucket ssh key"
 bitbucketUser="pkk82"
 bitbucketPassword=`askPassword "Enter bitbucket password for user '$bitbucketUser'"`
 bitbucketSshUrl="https://api.bitbucket.org/2.0/users/$bitbucketUser/ssh-keys"
@@ -148,29 +158,29 @@ labelExists=`echo "$serverKeys" | grep "$label"`
 keyExists=`echo "$serverKeys" | grep "$publicKey"`
 
 if [ "$labelAndKeyExists" != "" ]; then
-  echo -e "${GREEN}Public key found${NC}"
+  positiveMessage "Public key found"
 else
-  echo -e "${RED}Public key not found${NC}"
+  warningMessage "Public key not found"
 
   if [ "$keyExists" != "" ]; then
     oldLabel=`echo "$serverKeys" | grep "$publicKey" | awk '{print $2}'`
     id=`echo "$serverKeys" | grep "$publicKey" | awk '{print $1}'`
-    echo -e "${CYAN}Removing public key with label $oldLabel${NC}"
+    actionMessage "Removing public key with label $oldLabel"
     curl -X DELETE -u "$bitbucketUser:$bitbucketPassword" "$bitbucketSshUrl/$id"
   fi
 
   if [ "$labelExists" != "" ]; then
     id=`echo "$serverKeys" | grep "$label" | awk '{print $1}'`
-    echo -e "${CYAN}Removing public key with label $label${NC}"
+    actionMessage "Removing public key with label $label"
     curl -X DELETE -u "$bitbucketUser:$bitbucketPassword" "$bitbucketSshUrl/$id"
   fi
 
-  echo -e "${CYAN}Adding public key${NC}"
+  actionMessage "Adding public key"
   curl -X POST -u "$bitbucketUser:$bitbucketPassword" -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"label\": \"$label\"}" $bitbucketSshUrl
 fi
 
 # github
-echo -e "${CYAN}Check github ssh key${NC}"
+actionMessage "Checking github ssh key"
 gitHubUser="pkk82"
 gitHubPassword=`askPassword "Enter github password for user '$gitHubUser'"`
 gitHubSshUrl="https://api.github.com/user/keys"
@@ -180,36 +190,36 @@ labelExists=`echo "$serverKeys" | grep "$label"`
 keyExists=`echo "$serverKeys" | grep "$publicKey"`
 
 if [ "$labelAndKeyExists" != "" ]; then
-  echo -e "${GREEN}Public key found${NC}"
+  positiveMessage "Public key found"
 else
-  echo -e "${RED}Public key not found${NC}"
+  warningMessage "Public key not found"
 
   if [ "$keyExists" != "" ]; then
     oldLabel=`echo "$serverKeys" | grep "$publicKey" | awk '{print $2}'`
     id=`echo "$serverKeys" | grep "$publicKey" | awk '{print $1}'`
-    echo -e "${CYAN}Removing public key with label $oldLabel${NC}"
+    actionMessage "Removing public key with label $oldLabel"
     curl -X DELETE -u "$gitHubUser:$gitHubPassword" "$gitHubSshUrl/$id"
   fi
 
   if [ "$labelExists" != "" ]; then
     id=`echo "$serverKeys" | grep "$label" | awk '{print $1}'`
-    echo -e "${CYAN}Removing public key with label $label${NC}"
+    actionMessage "Removing public key with label $label"
     curl -X DELETE -u "$gitHubUser:$gitHubPassword" "$gitHubSshUrl/$id"
   fi
 
-  echo -e "${CYAN}Adding public key${NC}"
+  actionMessage "Adding public key"
   curl -X POST -u "$gitHubUser:$gitHubPassword" -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"title\": \"$label\"}" $gitHubSshUrl
 fi
 
 # download this project to workspace
-workspaceDir=`askDir "Enter path to workspace" "$HOME/workspace"`
+workspaceDir=`askWithDefault "Enter path to workspace" "$HOME/workspace"`
 mkdir -p "$workspaceDir/prv"
 repoDir="$workspaceDir/prv/orchestrator"
 if [ ! -d "$repoDir" ]; then
-  echo -e "${RED}Orchestrator project not found, cloning it to $repoDir${NC}"
+  warningMessage "Orchestrator project not found, cloning it to $repoDir"
   git clone "git@bitbucket.org:$bitbucketUser/prv_orchestrator.git" "$repoDir"
 else
-  echo -e "${GREEN}Orchestrator project found${NC}"
+  positiveMessage "Orchestrator project found"
 fi
 
 # copy file to dropbox
