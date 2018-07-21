@@ -7,6 +7,12 @@ function askPassword {
   echo "$password"
 }
 
+function askDir {
+  read -p "$(echo -e "$CYAN$1$NC ($2): ")" dir
+  local dir=${dir:-$2}
+  echo "$dir"
+}
+
 # calculate system
 osname=`uname`
 if [ "$USERPROFILE" != "" ]; then
@@ -19,10 +25,7 @@ fi
 echo -e "${GREEN}Detected system: $system${NC}"
 
 # detect dropbox directory
-cloudDirDefault="$HOME/vd/Dropbox"
-echo -e -n "${CYAN}Enter path to dropbox${NC} ($cloudDirDefault): "
-read cloudDir
-cloudDir=${cloudDir:-$cloudDirDefault}
+cloudDir=`askDir "Enter path to dropbox" "$HOME/vd/Dropbox"`
 
 # validate sudo
 if [ "$system" != "windows" ]; then
@@ -196,6 +199,17 @@ else
 
   echo -e "${CYAN}Adding public key${NC}"
   curl -X POST -u "$gitHubUser:$gitHubPassword" -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"title\": \"$label\"}" $gitHubSshUrl
+fi
+
+# download this project to workspace
+workspaceDir=`askDir "Enter path to workspace" "$HOME/workspace"`
+mkdir -p "$workspaceDir/prv"
+repoDir="$workspaceDir/prv/orchestrator"
+if [ ! -d "$repoDir" ]; then
+  echo -e "${RED}Orchestrator project not found, cloning it to $repoDir${NC}"
+  git clone "git@bitbucket.org:$bitbucketUser/prv_orchestrator.git" "$repoDir"
+else
+  echo -e "${GREEN}Orchestrator project found${NC}"
 fi
 
 # copy file to dropbox
