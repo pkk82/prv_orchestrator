@@ -92,7 +92,7 @@ git config --global user.name "$gitUser"
 
 # set git user email
 gitEmailDefault=`git config --list | grep user.email | cut -d= -f2`
-gitEmail=`askWithDefault "Enter git user email" "$gitUserDefault"`
+gitEmail=`askWithDefault "Enter git user email" "$gitEmailDefault"`
 git config --global user.email "$gitEmail"
 
 # set auto rebase for git
