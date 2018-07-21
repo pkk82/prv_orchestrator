@@ -2,17 +2,19 @@
 NC='\033[0m'; RED='\033[0;31m'; GREEN='\033[0;32m'; CYAN='\033[0;36m'
 
 
+function askPassword {
+  read -s -p "$(echo -e "$CYAN$1$NC: ")" password
+  echo "$password"
+}
+
 # calculate system
 osname=`uname`
 if [ "$USERPROFILE" != "" ]; then
   system="windows"
-  curl="winpty curl"
 elif [[ "$osname" == "Linux" ]]; then
   system="linux"
-  curl="curl"
 elif [[ "$osname" == "Darwin" ]]; then
   system="mac"
-  curl="curl"
 fi
 echo -e "${GREEN}Detected system: $system${NC}"
 
@@ -135,8 +137,9 @@ label="$user@$host"
 # bitbucket
 echo -e "${CYAN}Check bitbucket ssh key${NC}"
 bitbucketUser="pkk82"
+bitbucketPassword=`askPassword "Enter bitbucket password for user '$bitbucketUser': "`
 bitbucketSshUrl="https://api.bitbucket.org/2.0/users/$bitbucketUser/ssh-keys"
-serverKeys=`$curl -X GET -u "$bitbucketUser" "$bitbucketSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin)["values"]: print(str(e["uuid"]) + " " + e["label"] + " " + e["key"])'`
+serverKeys=`curl -u "$bitbucketUser:$bitbucketPassword" "$bitbucketSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin)["values"]: print(str(e["uuid"]) + " " + e["label"] + " " + e["key"])'`
 labelAndKeyExists=`echo "$serverKeys" | grep "$label" | grep "$publicKey"`
 labelExists=`echo "$serverKeys" | grep "$label"`
 keyExists=`echo "$serverKeys" | grep "$publicKey"`
@@ -150,24 +153,25 @@ else
     oldLabel=`echo "$serverKeys" | grep "$publicKey" | awk '{print $2}'`
     id=`echo "$serverKeys" | grep "$publicKey" | awk '{print $1}'`
     echo -e "${CYAN}Removing public key with label $oldLabel${NC}"
-    $curl -X DELETE -u "$bitbucketUser" "$bitbucketSshUrl/$id"
+    curl -X DELETE -u "$bitbucketUser:$bitbucketPassword" "$bitbucketSshUrl/$id"
   fi
 
   if [ "$labelExists" != "" ]; then
     id=`echo "$serverKeys" | grep "$label" | awk '{print $1}'`
     echo -e "${CYAN}Removing public key with label $label${NC}"
-    $curl -X DELETE -u "$bitbucketUser" "$bitbucketSshUrl/$id"
+    curl -X DELETE -u "$bitbucketUser:$bitbucketPassword" "$bitbucketSshUrl/$id"
   fi
 
   echo -e "${CYAN}Adding public key${NC}"
-  $curl -X POST -u "$bitbucketUser" -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"label\": \"$label\"}" $bitbucketSshUrl
+  curl -X POST -u "$bitbucketUser:$bitbucketPassword" -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"label\": \"$label\"}" $bitbucketSshUrl
 fi
 
 # github
 echo -e "${CYAN}Check github ssh key${NC}"
 gitHubUser="pkk82"
+gitHubPassword=`askPassword "Enter github password for user '$gitHubUser': "`
 gitHubSshUrl="https://api.github.com/user/keys"
-serverKeys=`curl -X GET -u $gitHubUser "$gitHubSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin): print(str(e["id"]) + " " + e["title"] + " " + e["key"])'`
+serverKeys=`curl -u "$gitHubUser:$gitHubPassword" "$gitHubSshUrl" | python -c $'import json, sys\nfor e in json.load(sys.stdin): print(str(e["id"]) + " " + e["title"] + " " + e["key"])'`
 labelAndKeyExists=`echo "$serverKeys" | grep "$label" | grep "$publicKey"`
 labelExists=`echo "$serverKeys" | grep "$label"`
 keyExists=`echo "$serverKeys" | grep "$publicKey"`
@@ -181,17 +185,17 @@ else
     oldLabel=`echo "$serverKeys" | grep "$publicKey" | awk '{print $2}'`
     id=`echo "$serverKeys" | grep "$publicKey" | awk '{print $1}'`
     echo -e "${CYAN}Removing public key with label $oldLabel${NC}"
-    $curl -X DELETE -u "$gitHubUser" "$gitHubSshUrl/$id"
+    curl -X DELETE -u "$gitHubUser:$gitHubPassword" "$gitHubSshUrl/$id"
   fi
 
   if [ "$labelExists" != "" ]; then
     id=`echo "$serverKeys" | grep "$label" | awk '{print $1}'`
     echo -e "${CYAN}Removing public key with label $label${NC}"
-    $curl -X DELETE -u "$gitHubUser" "$gitHubSshUrl/$id"
+    curl -X DELETE -u "$gitHubUser:$gitHubPassword" "$gitHubSshUrl/$id"
   fi
 
   echo -e "${CYAN}Adding public key${NC}"
-  $curl -X POST -u "$gitHubUser" -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"title\": \"$label\"}" $gitHubSshUrl
+  curl -X POST -u "$gitHubUser:$gitHubPassword" -H "Content-Type: application/json" -d "{\"key\": \"$publicKey\", \"title\": \"$label\"}" $gitHubSshUrl
 fi
 
 # copy file to dropbox
