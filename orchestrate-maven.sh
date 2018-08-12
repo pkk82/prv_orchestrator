@@ -63,23 +63,5 @@ for specMaven in `ls -d $mavenDir/*`; do
 done
 JAVA_HOME=$currentJavaVersion
 
-#add maven variables
-maxVersion=0
-echo "# maven" >> $varFile
-for specMaven in `ls -d $mavenDir/*`; do
-	mavenVersion=$(echo $specMaven | awk -F/ '{print $(NF)}' | sed 's/apache-maven-\(.*\)/\1/')
-	major=$(echo $mavenVersion | cut -d'.' -f1)
-	minor=$(echo $mavenVersion | cut -d'.' -f2)
-	patch=$(echo $mavenVersion | cut -d'.' -f3)
-
-	if [[ $major -gt $maxVersion ]]; then
-		maxVersion=$major
-	else
-		sed -i $sedBackupSuffix /MVN${major}_HOME=/d $varFile
-	fi
-	echo "export MVN${major}_HOME=$specMaven" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-done;
-echo "export MVN_HOME=\$MVN${maxVersion}_HOME" >> $varFile
+createVariables2 apache-maven mvn "sed 's/apache-maven-//g'"
 echo "export MAVEN_OPTS=\"-Dmaven.wagon.http.ssl.insecure=true\"" >> $varFile
-echo "export PATH=\$MVN_HOME/bin:\$PATH" >> $varFile
-. $varFile

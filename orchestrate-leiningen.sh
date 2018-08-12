@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 copyFamilyAsDirs lein
-createVariables2 lein LEIN
+createVariables2 lein lein
 
 for instruction in `cat $varFile | grep LEIN | grep PF_DIR | grep -v PATH`; do
 	if [[ "$instruction" == *"="* ]]; then
