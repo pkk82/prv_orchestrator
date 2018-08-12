@@ -53,7 +53,7 @@ function makeDir {
 function unzipFamily {
 	familyDir=$pfDir/$1
 	makeDir $familyDir
-	for zip in `ls -d $cloudDir/$1/*.zip`; do
+	for zip in `ls $cloudDir/$1/*.zip $cloudDir/$1/$system/*.zip 2>/dev/null`; do
 		zipDir=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
 		zipDir=${zipDir%/}
 		destFolder=$familyDir/$zipDir
