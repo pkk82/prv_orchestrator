@@ -80,6 +80,11 @@ cat > $mvnSettings << EOL
             <password>$encryptedNexusCloudPassword</password>
         </server>
         <server>
+            <id>pkk82-nexus-public</id>
+            <username>pkk82</username>
+            <password>$encryptedNexusCloudPassword</password>
+        </server>
+        <server>
             <id>gpg</id>
             <passphrase>$encryptedGpgKeyPassphrase</passphrase>
         </server>
