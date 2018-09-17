@@ -26,12 +26,17 @@ if [ "$configureIntellij" == "y" ]; then
 	  intellijOptionsDir=$intellijHomeDir/options
 	else
 	  intellijOptionsDir=$intellijHomeDir/config/options
+
 	  intellijInspectionDir=$intellijHomeDir/config/inspection
+	  makeDir $intellijInspectionDir
+
 		intellijKeymapsDir=$intellijHomeDir/config/keymaps
+	  makeDir $intellijKeymapsDir
+
+		intellijTemplatesDir=$intellijHomeDir/config/templates
+		makeDir $intellijTemplatesDir
 	fi
 	makeDir $intellijOptionsDir
-	makeDir $intellijInspectionDir
-	makeDir $intellijKeymapsDir
 
 	for shFile in `ls ./intellij-idea/*.sh`; do
 		. $shFile
