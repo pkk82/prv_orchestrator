@@ -19,6 +19,12 @@ cat > $atomDir/config.cson << EOF
     preferredLineLength: 120
     showInvisibles: true
     tabLength: 4
+  "spell-check":
+    locales: [
+      "pl-PL"
+      "en-US"
+      "en-GB"
+    ]
   welcome:
     showOnStartup: false
 EOF
