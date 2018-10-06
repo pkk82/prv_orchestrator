@@ -40,121 +40,121 @@ function askYN {
 }
 
 function makeDir {
-	if [ -d $1 ]; then
-		echo -e "${CYAN}Dir $1 already exists${NC}"
-	elif mkdir -p $1; then
-		echo -e "${GREEN}Dir $1 created${NC}"
-	else
-		echo -e "${RED}Dir $1 not created${NC}"
-		exit
-	fi
+  if [ -d $1 ]; then
+    echo -e "${CYAN}Dir $1 already exists${NC}"
+  elif mkdir -p $1; then
+    echo -e "${GREEN}Dir $1 created${NC}"
+  else
+    echo -e "${RED}Dir $1 not created${NC}"
+    exit
+  fi
 }
 
 function unzipFamily {
-	familyDir=$pfDir/$1
-	makeDir $familyDir
-	for zip in `ls $cloudDir/$1/*.zip $cloudDir/$1/$system/*.zip 2>/dev/null`; do
-		zipDir=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
-		zipDir=${zipDir%/}
-		destFolder=$familyDir/$zipDir
-		if [ -d "$destFolder" ]; then
-			echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
-		else
-			unzip -q $zip -d $familyDir
-			echo "$zipDir extracted to $familyDir"
-		fi
-	done
+  familyDir=$pfDir/$1
+  makeDir $familyDir
+  for zip in `ls $cloudDir/$1/*.zip $cloudDir/$1/$system/*.zip 2>/dev/null`; do
+    zipDir=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
+    zipDir=${zipDir%/}
+    destFolder=$familyDir/$zipDir
+    if [ -d "$destFolder" ]; then
+      echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
+    else
+      unzip -q $zip -d $familyDir
+      echo "$zipDir extracted to $familyDir"
+    fi
+  done
 }
 
 
 function copyFamilyAsFiles {
-	familyDir=$pfDir/$1
-	makeDir $familyDir
-	for file in `ls -d $cloudDir/$1/$1*`; do
-		fileName=$(echo $file | awk -F/ '{print $(NF)}')
-		destFile=$familyDir/$fileName
-		if [ -f "$destFile" ]; then
-			echo -e "${CYAN}File $destFile exists - skipping${NC}"
-		else
-			cp $file $familyDir
-			echo "$fileName copied to $familyDir"
-		fi
-	done
+  familyDir=$pfDir/$1
+  makeDir $familyDir
+  for file in `ls -d $cloudDir/$1/$1*`; do
+    fileName=$(echo $file | awk -F/ '{print $(NF)}')
+    destFile=$familyDir/$fileName
+    if [ -f "$destFile" ]; then
+      echo -e "${CYAN}File $destFile exists - skipping${NC}"
+    else
+      cp $file $familyDir
+      echo "$fileName copied to $familyDir"
+    fi
+  done
 }
 
 function copyFamilyAsDirs {
-	familyDir=$pfDir/$1
-	makeDir $familyDir
-	for dir in `ls -d $cloudDir/$1/$1*`; do
-		dirName=$(echo $dir | awk -F/ '{print $(NF)}')
-		destDir=$familyDir/$dirName
-		if [ -d "$destDir" ]; then
-			echo -e "${CYAN}Directory $destDir exists - skipping${NC}"
-		else
-			cp -R $dir ${familyDir%/}
-			echo -e "${GREEN}$destDir copied to $familyDir${NC}"
-		fi
-	done
+  familyDir=$pfDir/$1
+  makeDir $familyDir
+  for dir in `ls -d $cloudDir/$1/$1*`; do
+    dirName=$(echo $dir | awk -F/ '{print $(NF)}')
+    destDir=$familyDir/$dirName
+    if [ -d "$destDir" ]; then
+      echo -e "${CYAN}Directory $destDir exists - skipping${NC}"
+    else
+      cp -R $dir ${familyDir%/}
+      echo -e "${GREEN}$destDir copied to $familyDir${NC}"
+    fi
+  done
 }
 
 function verify {
-	familyDir=$pfDir/$1
-	for spec in `ls -d $familyDir/*`; do
-		expectedVersion=$(echo $spec | awk -F/ '{print $(NF)}' | sed "s/$1-\(.*\)/\1/")
-		minor=$(echo $expectedVersion | cut -d. -f2)
-		if [ ! -z ${3+x} ]; then
-			eval $3
-		fi
-		actualVersion=$(eval $spec/$2)
-		if [[ $actualVersion == "$expectedVersion" ]]; then
-			echo -e "${GREEN}$1 version is correct - $actualVersion${NC}"
-		else
-			echo -e "${RED}$1 version is not correct - expected: $expectedVersion, got: $actualVersion${NC}"
-		fi
-	done
+  familyDir=$pfDir/$1
+  for spec in `ls -d $familyDir/*`; do
+    expectedVersion=$(echo $spec | awk -F/ '{print $(NF)}' | sed "s/$1-\(.*\)/\1/")
+    minor=$(echo $expectedVersion | cut -d. -f2)
+    if [ ! -z ${3+x} ]; then
+      eval $3
+    fi
+    actualVersion=$(eval $spec/$2)
+    if [[ $actualVersion == "$expectedVersion" ]]; then
+      echo -e "${GREEN}$1 version is correct - $actualVersion${NC}"
+    else
+      echo -e "${RED}$1 version is not correct - expected: $expectedVersion, got: $actualVersion${NC}"
+    fi
+  done
 }
 
 function createVariables2 {
-	maxVersionToCompare=0
-	maxVersion=""
-	familyDir=$pfDir/$1
-	upperName=`echo $2 | awk '{print toupper($0)}'`
-	echo "# $1" >> $varFile
-	for specPath in `ls -d $familyDir/* 2>/dev/null`; do
-		spec=`basename $specPath`
-		if [ "$3" == "" ]; then
-			version=$(echo $spec | awk -F- '{print $NF}')
-		else
-			version=$(eval " echo $spec | $3")
-		fi
-		majorVersion=$(echo $version | cut -d. -f1)
-		minorVersion=$(echo $version | cut -d. -f2)
-		version=${majorVersion}_${minorVersion}
-		minorVersionNumber=`echo $minorVersion | sed s/[a-z]*//g`
-		versionToCompare=$((10000 * $majorVersion + $minorVersionNumber))
-		if [[ $versionToCompare -gt $maxVersionToCompare ]]; then
-			maxVersionToCompare=$versionToCompare
-			maxVersion=$version
-		fi
-		specHomeVar="${upperName}${version}_HOME"
-		homeVar="${upperName}_HOME"
-		echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-		if [ -d "$specPath/bin" ]; then
-			echo "alias use-$2-${version}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
-		else
-			echo "alias use-$2-${version}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
-		fi
-	done;
+  maxVersionToCompare=0
+  maxVersion=""
+  familyDir=$pfDir/$1
+  upperName=`echo $2 | awk '{print toupper($0)}'`
+  echo "# $1" >> $varFile
+  for specPath in `ls -d $familyDir/* 2>/dev/null`; do
+    spec=`basename $specPath`
+    if [ "$3" == "" ]; then
+      version=$(echo $spec | awk -F- '{print $NF}')
+    else
+      version=$(eval " echo $spec | $3")
+    fi
+    majorVersion=$(echo $version | cut -d. -f1)
+    minorVersion=$(echo $version | cut -d. -f2)
+    version=${majorVersion}_${minorVersion}
+    minorVersionNumber=`echo $minorVersion | sed s/[a-z]*//g`
+    versionToCompare=$((10000 * $majorVersion + $minorVersionNumber))
+    if [[ $versionToCompare -gt $maxVersionToCompare ]]; then
+      maxVersionToCompare=$versionToCompare
+      maxVersion=$version
+    fi
+    specHomeVar="${upperName}${version}_HOME"
+    homeVar="${upperName}_HOME"
+    echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+    if [ -d "$specPath/bin" ]; then
+      echo "alias use-$2-${version}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
+    else
+      echo "alias use-$2-${version}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
+    fi
+  done;
 
-	if [[ "$maxVersion" != "" ]]; then
-		echo "export $homeVar=\$$specHomeVar" >> $varFile
-		if [ -d "$specPath/bin" ]; then
-			echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
-		else
-			echo "export PATH=\$$homeVar:\$PATH" >> $varFile
-		fi
-	fi
-	. $varFile
+  if [[ "$maxVersion" != "" ]]; then
+    echo "export $homeVar=\$$specHomeVar" >> $varFile
+    if [ -d "$specPath/bin" ]; then
+      echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
+    else
+      echo "export PATH=\$$homeVar:\$PATH" >> $varFile
+    fi
+  fi
+  . $varFile
 }
 
 function backslashWhenWindows {
@@ -178,17 +178,17 @@ function driveNotationWhenWindows {
 # calculate system
 osname=`uname`
 if [ "$USERPROFILE" != "" ]; then
-	system="windows"
-	mainDir="/c"
-	sedBackupSuffix=""
+  system="windows"
+  mainDir="/c"
+  sedBackupSuffix=""
 elif [[ "$osname" == "Linux" ]]; then
-	system="linux"
-	mainDir=$HOME
-	sedBackupSuffix=""
+  system="linux"
+  mainDir=$HOME
+  sedBackupSuffix=""
 elif [[ "$osname" == "Darwin" ]]; then
-	system="mac"
-	mainDir=$HOME
-	sedBackupSuffix=".bak"
+  system="mac"
+  mainDir=$HOME
+  sedBackupSuffix=".bak"
 fi
 echo -e "${GREEN}Detected system: $system${NC}"
 
@@ -203,15 +203,15 @@ read useStandardPfDir
 useStandardPfDir=${useStandardPfDir:-$useStandardPfDirDefault}
 
 if [ "$useStandardPfDir" == "y" ]; then
-	pfDir=${mainDir}/pf
+  pfDir=${mainDir}/pf
 else
-	existingDirs=$(ls -d $mainDir/pf*)
-	echo "Existing pf directories:"
-	echo "$existingDirs"
-	pfDirDefault="$mainDir/pf-$(date '+%Y%m%d-%H%M')"
-	echo -e -n "${CYAN}Enter path to program files directory${NC} ($pfDirDefault): "
-	read pfDir
-	pfDir=${pfDir:-$pfDirDefault}
+  existingDirs=$(ls -d $mainDir/pf*)
+  echo "Existing pf directories:"
+  echo "$existingDirs"
+  pfDirDefault="$mainDir/pf-$(date '+%Y%m%d-%H%M')"
+  echo -e -n "${CYAN}Enter path to program files directory${NC} ($pfDirDefault): "
+  read pfDir
+  pfDir=${pfDir:-$pfDirDefault}
 fi
 makeDir $pfDir
 
