@@ -55,7 +55,7 @@ function unzipFamily {
   makeDir $familyDir
   for zip in `ls $cloudDir/$1/*.zip $cloudDir/$1/$system/*.zip 2>/dev/null`; do
     dirInZip=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
-    dirInZip=${zipDir%/}
+    dirInZip=${dirInZip%/}
     destDir=$familyDir/$dirInZip
     if [ "$2" != "" ]; then
       destDir=`eval "echo $destDir | $2"`
