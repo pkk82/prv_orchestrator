@@ -54,17 +54,47 @@ function unzipFamily {
   familyDir=$pfDir/$1
   makeDir $familyDir
   for zip in `ls $cloudDir/$1/*.zip $cloudDir/$1/$system/*.zip 2>/dev/null`; do
-    zipDir=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
-    zipDir=${zipDir%/}
-    destFolder=$familyDir/$zipDir
-    if [ -d "$destFolder" ]; then
-      echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
+    dirInZip=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
+    dirInZip=${zipDir%/}
+    destDir=$familyDir/$dirInZip
+    if [ "$2" != "" ]; then
+      destDir=`eval "echo $destDir | $2"`
+    fi
+    if [ -d "$destDir" ]; then
+      echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
     else
       unzip -q $zip -d $familyDir
-      echo "$zipDir extracted to $familyDir"
+      if [ "$2" != "" ]; then
+        mv $familyDir/$dirInZip $destDir
+      fi
+      echo "$dirInZip extracted to $familyDir as $destDir"
     fi
   done
 }
+
+function untarFamily {
+  familyDir=$pfDir/$1
+  makeDir $familyDir
+  for archive in `ls $cloudDir/$1/*.tar.gz $cloudDir/$1/$system/*.tar.gz $cloudDir/$1/*.tar.xz $cloudDir/$1/$system/*.tar.xz 2>/dev/null`; do
+    dirInArch=`tar -tf $archive | head -n 1`
+    dirInArch=${dirInArch%/}
+    destDir=$familyDir/$dirInArch
+    if [ "$2" != "" ]; then
+      destDir=`eval "echo $destDir | $2"`
+    fi
+    if [ -d "$destDir" ]; then
+      echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
+    else
+      tar xf $archive -C $familyDir
+      if [ "$2" != "" ]; then
+        mv $familyDir/$dirInArch $destDir
+      fi
+      echo "$dirInArch extracted to $familyDir as $destDir"
+    fi
+  done
+}
+
+
 
 
 function copyFamilyAsFiles {
