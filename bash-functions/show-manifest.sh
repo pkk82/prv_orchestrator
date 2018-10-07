@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 function show-manifest {
   if [ -z "$1" ]; then
     for jarFile in `ls -f ./*.jar 2>/dev/null`; do

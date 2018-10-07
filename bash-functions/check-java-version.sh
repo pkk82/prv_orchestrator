@@ -1,6 +1,7 @@
+#!/usr/bin/env bash
 function check-java-version {
   for jarFile in `ls -f ./*.jar 2>/dev/null`; do
-    className=`jar tf $jarFile | grep .class | grep -v [$] | head -n 1 | sed s/.class//g`
+    className=`jar tf $jarFile | grep .class | grep -v "[$]" | head -n 1 | sed s/.class//g`
     version=`javap -verbose -classpath $jarFile $className | grep 'major version:' | awk '{print $(NF)}'`
     case $version in
       52) javaVersion="8"
