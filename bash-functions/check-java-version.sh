@@ -5,11 +5,13 @@ function check-java-version {
     findPath="."
   else
     artifactPath=`echo $1 | sed "s|:|/|g" | sed "s|\.|/|g"`
-    findPath="~/.m2/repository/$artifactPath"
+    findPath="$HOME/.m2/repository/$artifactPath"
   fi
 
+  echo "Looking jars in $findPath"
 
-  for jarFile in `find $findPath -name \*.jar 2>/dev/null`; do
+
+  for jarFile in `find $findPath -name *.jar`; do
     className=`jar tf $jarFile | grep .class | grep -v "[$]" | head -n 1 | sed s/.class//g`
     version=`javap -verbose -classpath $jarFile $className | grep 'major version:' | awk '{print $(NF)}'`
     case $version in
