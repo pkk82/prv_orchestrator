@@ -29,15 +29,17 @@ function create-package-under-source-directory {
     packageName=`echo $packageName | sed 's/.$//g' | sed 's/[-_]//g' | sed 's/c\.pl/pluralsight/g'`
     dir=`pwd`
     dir=`basename $dir`
+
     module=`echo $dir | cut -d _ -f1`
     if [[ $module =~ ^[0-9]+$ ]]; then
       packageName="$packageName.m$module"
     fi
+
     clip=`echo $dir | cut -d _ -f2`
-          module=`echo $dir | cut -d _ -f1`
     if [[ $clip =~ ^[0-9]+$ ]]; then
       packageName="$packageName.c$clip"
     fi
+
     packageDir=`echo $packageName | sed 's|\.|/|g'`
     mkdir -p src/$kindDir/$lang/$packageDir
 
@@ -46,13 +48,15 @@ function create-package-under-source-directory {
       fileName="${fileName}Test"
     fi
 
-    if [ "lang" == "java" ]; then
+    if [ "$lang" == "java" ]; then
       fileName="$fileName.java"
+      echo "package $packageName;" >> src/$kindDir/$lang/$packageDir/$fileName
     else
       fileName="$fileName.kt"
+      echo "package $packageName" >> src/$kindDir/$lang/$packageDir/$fileName
     fi
 
-    echo "package $packageName" >> src/$kindDir/$lang/$packageDir/$fileName
+
 
 
   fi
