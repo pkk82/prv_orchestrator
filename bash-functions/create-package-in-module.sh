@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-function create-package-under-source-directory {
+function create-package-in-module {
 
   if [[ "$1" == "" ]]; then
-    echo "Use create-package-under-source-directory [java|kotlin] [main|test]"
+    echo "Use create-package-in-module [java|kotlin] [main|test]"
   else
     if [[ "$2" == "test" ]]; then
       kindDir="test"
