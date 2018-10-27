@@ -4,10 +4,7 @@ javaDir=$pfDir/java
 makeDir $javaDir
 
 
-function calculateDestFolderName {
-  destFolder=`echo $1 | sed 's/\.bin//g' | sed 's/\.tar\.gz//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed "s/-$system//g"`
-  echo $destFolder
-}
+destFolderNameTransformation="sed 's/\.bin//g' | sed 's/\.tar\.gz//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed 's/-$system//g'"
 
 if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ]; then
 
@@ -21,7 +18,7 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
       continue
     fi
 
-    destDir=`calculateDestFolderName $javaBin`
+    destDir=`eval "echo $destDir | $destFolderNameTransformation"`
     version=`echo $destDir | awk -F- '{print $2}'`
 
     if [[ "$version" =~ [0-9]+_[0-9]+_[0-9]+_[0-9]+ ]]; then
@@ -66,18 +63,9 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
   cd $currentDir
 fi
 
-for javaTgzPath in `ls -d $cloudDir/java/$system/*.tar.gz 2>/dev/null`; do
-  tarDir=`tar -tf $javaTgzPath | head -n 1 | awk -F/ '{print $1}'`
-  tarDir=${tarDir%/}
-  javaTgz=`basename $javaTgzPath`
-  destFolder=`calculateDestFolderName $javaTgz`
-  if [ -d "$javaDir/$destFolder" ]; then
-    echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
-  else
-    tar -zxf $javaTgzPath --transform "s/$tarDir/$destFolder/" -C $javaDir
-    echo "$javaTgzPath extracted to $javaDir"
-  fi
-done
+
+untarFamily java "$destFolderNameTransformation"
+unzipFamily java
 
 for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
   mountDir=`hdiutil attach $javaDmg | awk 'FNR==2{print substr($0, index($0, $3))}'`;
@@ -116,16 +104,12 @@ for specJava in `ls -d $javaDir/jdk-*`; do
   expectedJavaVersion=`echo $specJava | awk -F- '{print $(NF-1)}'`
   majorMinor=`echo $expectedJavaVersion | awk -Fu '{print $1}'`
   patch=`echo $expectedJavaVersion | awk -Fu '{print $2}'`
-  major=`echo $majorMinor | awk -F. '{print $1}'`
-  minor=`echo $majorMinor | awk -F. '{print $2}'`
-  if [ "$minor" == "" ]; then
-    minor="0"
-  fi
-  patch=`echo $expectedJavaVersion | awk -Fu '{print $2}'`
-  if [[ "$actualJavaVersion" =~ [0-9]+\.[0-9]+\.[0-9]+_[0-9]+ ]]; then
-    expectedJavaVersion="1.$major.${minor}_$patch"
-  elif [[ "$actualJavaVersion" =~ [0-9]+\.[0-9]+\.[0-9]+ ]]; then
-    expectedJavaVersion="$major.$minor.$patch"
+  if [[ "$majorMinor" =~ [0-9]+\.[0-9]+\.[0-9] ]]; then
+    expectedJavaVersion="${majorMinor}_$patch"
+  elif [[ "$majorMinor" =~ [5678] ]]; then
+    expectedJavaVersion="1.$majorMinor.0_$patch"
+  else
+    expectedJavaVersion="$majorMinor.0.$patch"
   fi
 
   if [[ $actualJavaVersion == "$expectedJavaVersion" ]]; then
@@ -148,4 +132,4 @@ for specJava in `ls -d $javaDir/jdk-*`; do
 done
 
 #add java variables
-createVariables2 java java "sed 's/jdk-//g' | sed 's/\.[0-9]*//g' | sed 's/u[0-9]*//g' | sed 's/-i586/.x32/g' | sed 's/-x64/.x64/g'"
+createVariables2 java java "sed 's/jdk-//g' | sed 's/1\.//g' | sed 's/\.[0-9]*//g' | sed 's/u[0-9]*//g' | sed 's/-i586/.x32/g' | sed 's/-x64/.x64/g'"
