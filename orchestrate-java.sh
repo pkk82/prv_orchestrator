@@ -4,9 +4,6 @@ javaDir=$pfDir/java
 makeDir $javaDir
 
 
-destFolderNameTransformation="sed 's/\.bin//g' | sed 's/\.tar\.gz//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed 's/-$system//g'"
-
-
 if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ]; then
 
   currentDir=`pwd`
@@ -19,24 +16,7 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
       continue
     fi
 
-    destDir=`eval "echo $destDir | $destFolderNameTransformation"`
-    version=`echo $destDir | awk -F- '{print $2}'`
-
-    if [[ "$version" =~ [0-9]+_[0-9]+_[0-9]+_[0-9]+ ]]; then
-      major=`echo $version | awk -F_ '{print $2}'`
-      minor=`echo $version | awk -F_ '{print $3}'`
-      patch=`echo $version | awk -F_ '{print $4}'`
-    elif [[ "$version" =~ [0-9]+u[0-9]+ ]]; then
-      major=`echo $version | awk -Fu '{print $1}'`
-      minor="0"
-      patch=`echo $version | awk -Fu '{print $2}'`
-    fi
-
-    if [[ "$minor" == "0" ]]; then
-      destDir=`echo $destDir | sed "s/$version/${major}u${patch}/g"`
-    else
-      destDir=`echo $destDir | sed "s/$version/${major}.${minor}u${patch}/g"`
-    fi
+    destDir=`echo $javaBinPath | awk -F/ '{print $NF}' | sed "s/-$system//g" | sed 's/.bin//g'`
 
     if [ -d "$javaDir/$destDir" ]; then
       echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
