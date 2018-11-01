@@ -6,6 +6,7 @@ makeDir $javaDir
 
 destFolderNameTransformation="sed 's/\.bin//g' | sed 's/\.tar\.gz//g' | sed 's/j2sdk/jdk/g' | sed 's/amd64/x64/g' | sed 's/-$system//g'"
 
+
 if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ]; then
 
   currentDir=`pwd`
@@ -64,7 +65,7 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
 fi
 
 
-untarFamily java "$destFolderNameTransformation"
+untarFamily java "" "sed 's/-$system//g' | sed 's/.tar.gz//g'"
 unzipFamily java
 
 for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
