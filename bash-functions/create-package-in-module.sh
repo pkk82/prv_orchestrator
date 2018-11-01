@@ -43,7 +43,7 @@ function create-package-in-module {
     packageDir=`echo $packageName | sed 's|\.|/|g'`
     mkdir -p src/$kindDir/$lang/$packageDir
 
-    fileName="App"
+    fileName=`echo $dir | awk -F_ '{print $NF}'`
     if [ "$kindDir" == "test" ]; then
       fileName="${fileName}Test"
     fi
