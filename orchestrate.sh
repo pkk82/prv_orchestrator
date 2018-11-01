@@ -72,21 +72,30 @@ function unzipFamily {
   done
 }
 
+# $1 - family name
+# $2 - dirInArch transformation
+# $3 - archive name transformation
 function untarFamily {
   familyDir=$pfDir/$1
   makeDir $familyDir
   for archive in `ls $cloudDir/$1/*.tar.gz $cloudDir/$1/$system/*.tar.gz $cloudDir/$1/*.tar.xz $cloudDir/$1/$system/*.tar.xz 2>/dev/null`; do
-    dirInArch=`tar -tf $archive | head -n 1`
+    dirInArch=`tar -tf $archive | awk -F/ '{print $1}' | uniq | head -n 1`
     dirInArch=${dirInArch%/}
-    destDir=$familyDir/$dirInArch
+    archiveName=`echo $archive | awk -F/ '{print $NF}'`
     if [ "$2" != "" ]; then
+      destDir=$familyDir/$dirInArch
       destDir=`eval "echo $destDir | $2"`
     fi
+    if [ "$3" != "" ]; then
+      destDir=$familyDir/$archiveName
+      destDir=`eval "echo $destDir | $3"`
+    fi
+
     if [ -d "$destDir" ]; then
       echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
     else
       tar xf $archive -C $familyDir
-      if [ "$2" != "" ]; then
+      if [[ "$2" != "" || "$3" != "" ]]; then
         mv $familyDir/$dirInArch $destDir
       fi
       echo "$dirInArch extracted to $familyDir as $destDir"
