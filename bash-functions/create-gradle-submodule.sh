@@ -17,7 +17,7 @@ function create-gradle-submodule {
 
     cd $submodule
     create-package-in-module $2
-
+    cd ..
 
   fi
 }
