@@ -50,21 +50,31 @@ function makeDir {
   fi
 }
 
+# $1 - family name
+# $2 - dirInArch transformation
+# $3 - archive name transformation
 function unzipFamily {
   familyDir=$pfDir/$1
   makeDir $familyDir
   for zip in `ls $cloudDir/$1/*.zip $cloudDir/$1/$system/*.zip 2>/dev/null`; do
     dirInZip=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
     dirInZip=${dirInZip%/}
+    zipName=`echo $zip | awk -F/ '{print $NF}'`
     destDir=$familyDir/$dirInZip
     if [ "$2" != "" ]; then
+      destDir=$familyDir/$dirInZip
       destDir=`eval "echo $destDir | $2"`
+    fi
+    if [ "$3" != "" ]; then
+      destDir=$familyDir/$zipName
+      destDir=`eval "echo $destDir | $3"`
+      destDir=`echo $destDir | sed 's/.zip//g'`
     fi
     if [ -d "$destDir" ]; then
       echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
     else
       unzip -q $zip -d $familyDir
-      if [ "$2" != "" ]; then
+      if [[ "$2" != "" || "$3" != "" ]]; then
         mv $familyDir/$dirInZip $destDir
       fi
       echo "$dirInZip extracted to $familyDir as $destDir"
@@ -139,11 +149,7 @@ function copyFamilyAsDirs {
 function verify {
   familyDir=$pfDir/$1
   for spec in `ls -d $familyDir/*`; do
-    expectedVersion=$(echo $spec | awk -F/ '{print $(NF)}' | sed "s/$1-\(.*\)/\1/")
-    minor=$(echo $expectedVersion | cut -d. -f2)
-    if [ ! -z ${3+x} ]; then
-      eval $3
-    fi
+    expectedVersion=`echo $spec | awk -F/ '{print $(NF)}' | awk -F- '{print $(NF)}'`
     actualVersion=$(eval $spec/$2)
     if [[ $actualVersion == "$expectedVersion" ]]; then
       echo -e "${GREEN}$1 version is correct - $actualVersion${NC}"
