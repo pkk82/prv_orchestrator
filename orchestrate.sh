@@ -99,6 +99,7 @@ function untarFamily {
     if [ "$3" != "" ]; then
       destDir=$familyDir/$archiveName
       destDir=`eval "echo $destDir | $3"`
+      destDir=`echo $destDir | sed 's/.tar.gz//g'`
     fi
 
     if [ -d "$destDir" ]; then
@@ -149,12 +150,13 @@ function copyFamilyAsDirs {
 function verify {
   familyDir=$pfDir/$1
   for spec in `ls -d $familyDir/*`; do
-    expectedVersion=`echo $spec | awk -F/ '{print $(NF)}' | awk -F- '{print $(NF)}'`
+    expectedVersion1=`echo $spec | awk -F/ '{print $(NF)}' | awk -F- '{print $(NF)}'`
+    expectedVersion2=`echo $spec | awk -F/ '{print $(NF)}' | awk -F- '{print $(NF-1)}'`
     actualVersion=$(eval $spec/$2)
-    if [[ $actualVersion == "$expectedVersion" ]]; then
+    if [[ $actualVersion == "$expectedVersion1" || $actualVersion == "$expectedVersion2" ]]; then
       echo -e "${GREEN}$1 version is correct - $actualVersion${NC}"
     else
-      echo -e "${RED}$1 version is not correct - expected: $expectedVersion, got: $actualVersion${NC}"
+      echo -e "${RED}$1 version is not correct - expected: $expectedVersion1/$expectedVersion2, got: $actualVersion${NC}"
     fi
   done
 }
@@ -271,6 +273,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-aliases.sh
 . orchestrate-java.sh
 . orchestrate-java-jce-policy.sh
+. orchestrate-java-openjdk.sh
 . orchestrate-dtool.sh
 . orchestrate-ant.sh
 . orchestrate-kotlin.sh
