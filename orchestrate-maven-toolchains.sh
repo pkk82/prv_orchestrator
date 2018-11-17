@@ -13,18 +13,25 @@ cat >> $toolchains << EOL
 EOL
 
 javaDir=$pfDir/java
-for specJava in `ls -d $javaDir/*`; do
 
-  javaVersion=$(echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'u' -f1)
-  platform=$(echo $specJava | awk -F- '{print $NF}')
-  finalPath=`backslashWhenWindows $specJava`
+for familyDir in `ls -d $pfDir/java*`; do
+  vendor=`echo $familyDir | awk -F/ '{print $NF}' | awk -F- '{print $2}'`
+  if [[ $vendor == "" ]]; then
+    vendor="oracle"
+  fi
 
-  cat >> $toolchains << EOL
+  for specJava in `ls -d $familyDir/*`; do
+
+    javaVersion=`echo $specJava | awk -F- '{print $(NF-1)}' | cut -d'u' -f1`
+    platform=`echo $specJava | awk -F- '{print $NF}'`
+    finalPath=`backslashWhenWindows $specJava`
+
+    cat >> $toolchains << EOL
     <toolchain>
         <type>jdk</type>
         <provides>
             <version>${javaVersion}</version>
-            <vendor>sun</vendor>
+            <vendor>$vendor</vendor>
             <platform>$platform</platform>
         </provides>
         <configuration>
@@ -33,7 +40,11 @@ for specJava in `ls -d $javaDir/*`; do
     </toolchain>
 EOL
 
+  done
+
 done
+
+
 
 cat >> $toolchains << EOL
 </toolchains>
