@@ -168,7 +168,8 @@ function createVariables2 {
     fi
     majorVersion=$(echo $version | cut -d. -f1)
     minorVersion=$(echo $version | cut -d. -f2)
-    version=${majorVersion}_${minorVersion}
+    version=${majorVersion}_$minorVersion
+    compactVersion=$majorVersion$minorVersion
     minorVersionNumber=`echo $minorVersion | sed s/[a-z]*//g`
     versionToCompare=$((10000 * $majorVersion + $minorVersionNumber))
     if [[ $versionToCompare -gt $maxVersionToCompare ]]; then
@@ -179,9 +180,9 @@ function createVariables2 {
     homeVar="${upperName}_HOME"
     echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
     if [ -d "$specPath/bin" ]; then
-      echo "alias use-$2-${version}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
+      echo "alias use$2${compactVersion}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
     else
-      echo "alias use-$2-${version}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
+      echo "alias use$2${compactVersion}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
     fi
   done;
 
