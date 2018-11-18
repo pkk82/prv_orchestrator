@@ -12,12 +12,10 @@ cat >> $toolchains << EOL
 <toolchains>
 EOL
 
-javaDir=$pfDir/java
-
 for familyDir in `ls -d $pfDir/java*`; do
   vendor=`echo $familyDir | awk -F/ '{print $NF}' | awk -F- '{print $2}'`
   if [[ $vendor == "" ]]; then
-    vendor="oracle"
+    vendor="jdk"
   fi
 
   for specJava in `ls -d $familyDir/*`; do
