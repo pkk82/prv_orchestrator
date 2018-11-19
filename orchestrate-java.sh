@@ -31,7 +31,7 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
     mkdir $workingDir
     cd $workingDir
     /tmp/$javaBin
-    javaFile=`find "$workingDir" -name "java" 2>/dev/null | head -n 1`
+    javaFile=`find "$workingDir" -type f -name "java" 2>/dev/null | head -n 1`
 
     if [ -f "$javaFile" ]; then
       dirName=`ls $workingDir`
