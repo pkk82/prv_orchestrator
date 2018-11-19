@@ -47,3 +47,20 @@ if [ "$configureIntellij" == "y" ]; then
   done
 
 fi;
+
+# // TODO add memory customization
+# cat > ~/.IntelliJIdea2018.2/config/idea64.vmoptions << EOL
+# -Xms512m
+# -Xmx2048m
+# EOL
+
+# // TODO generate launcher
+# sudo cat > /usr/share/applications/intellij.desktop << EOL
+# [Desktop Entry]
+# Name=IntelliJ IDEA 2018.2
+# Comment=Intellij IDEA
+# Exec=/home/pkk82/pf/intellij-idea/intellij-idea-2018.2/bin/idea.sh
+# Icon=/home/pkk82/pf/intellij-idea/intellij-idea-2018.2/bin/idea.png
+# Terminal=false
+# Type=Application
+# EOL
