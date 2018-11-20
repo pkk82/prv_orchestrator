@@ -17,7 +17,7 @@ editorFile=$intellijOptionsDir/editor.codeinsight.xml
 
 cat > $editorFile << EOL
 <application>
-  <component name="DaemonCodeAnalyzerSettings">
+  <component name="DaemonCodeAnalyzerSettings" profile="pkk82">
     <option name="SHOW_METHOD_SEPARATORS" value="true" />
   </component>
 </application>
