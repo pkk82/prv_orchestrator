@@ -4,7 +4,7 @@ javaDir=$pfDir/java
 makeDir $javaDir
 
 
-if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ]; then
+if [[ "$system" == "linux" ]] && [[ `askYN "Configure Java from bin" "n"` == "y" ]]; then
 
   currentDir=`pwd`
   for javaBinPath in `ls -d $cloudDir/java/$system-bin/*bin 2>/dev/null`; do
@@ -12,13 +12,13 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
     javaBin=`basename $javaBinPath`
     proceed=`askYN "Configure $javaBin" "n"`
 
-    if [ "$proceed" == "n" ]; then
+    if [[ "$proceed" == "n" ]]; then
       continue
     fi
 
     destDir=`echo $javaBinPath | awk -F/ '{print $NF}' | sed "s/-$system//g" | sed 's/.bin//g'`
 
-    if [ -d "$javaDir/$destDir" ]; then
+    if [[ -d "$javaDir/$destDir" ]]; then
       echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
       continue
     fi
@@ -33,7 +33,7 @@ if [ "$system" == "linux" ] && [ `askYN "Configure Java from bin" "n"` == "y" ];
     /tmp/$javaBin
     javaFile=`find "$workingDir" -type f -name "java" 2>/dev/null | head -n 1`
 
-    if [ -f "$javaFile" ]; then
+    if [[ -f "$javaFile" ]]; then
       dirName=`ls $workingDir`
       mkdir $javaDir/$destDir
       cp -r $workingDir/$dirName/* $javaDir/$destDir/
@@ -54,12 +54,12 @@ for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
   version=`echo $javaDmg | awk -F- '{print $(NF-2)}'`
   majorVersion=`echo $version | awk -Fu '{print $1}'`
   patchVersion=`echo $version | awk -Fu '{print $2}'`
-  if [ "$patchVersion" == "" ]; then
+  if [[ "$patchVersion" == "" ]]; then
     destFolder=jdk-${majorVersion}-x64
   else
     destFolder=jdk-${majorVersion}u${patchVersion}-x64
   fi
-  if [ -d "$javaDir/$destFolder" ]; then
+  if [[ -d "$javaDir/$destFolder" ]]; then
     echo -e "${CYAN}Dir $destFolder exists - skipping${NC}"
   else
     rm -rf /tmp/$destFolder
