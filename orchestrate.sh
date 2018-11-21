@@ -40,7 +40,7 @@ function askYN {
 }
 
 function makeDir {
-  if [ -d $1 ]; then
+  if [[ -d $1 ]]; then
     echo -e "${CYAN}Dir $1 already exists${NC}"
   elif mkdir -p $1; then
     echo -e "${GREEN}Dir $1 created${NC}"
@@ -61,16 +61,16 @@ function unzipFamily {
     dirInZip=${dirInZip%/}
     zipName=`echo $zip | awk -F/ '{print $NF}'`
     destDir=$familyDir/$dirInZip
-    if [ "$2" != "" ]; then
+    if [[ "$2" != "" ]]; then
       destDir=$familyDir/$dirInZip
       destDir=`eval "echo $destDir | $2"`
     fi
-    if [ "$3" != "" ]; then
+    if [[ "$3" != "" ]]; then
       destDir=$familyDir/$zipName
       destDir=`eval "echo $destDir | $3"`
       destDir=`echo $destDir | sed 's/.zip//g'`
     fi
-    if [ -d "$destDir" ]; then
+    if [[ -d "$destDir" ]]; then
       echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
     else
       unzip -q $zip -d $familyDir
@@ -92,17 +92,17 @@ function untarFamily {
     dirInArch=`tar -tf $archive | awk -F/ '{print $1}' | uniq | head -n 1`
     dirInArch=${dirInArch%/}
     archiveName=`echo $archive | awk -F/ '{print $NF}'`
-    if [ "$2" != "" ]; then
+    if [[ "$2" != "" ]]; then
       destDir=$familyDir/$dirInArch
       destDir=`eval "echo $destDir | $2"`
     fi
-    if [ "$3" != "" ]; then
+    if [[ "$3" != "" ]]; then
       destDir=$familyDir/$archiveName
       destDir=`eval "echo $destDir | $3"`
       destDir=`echo $destDir | sed 's/.tar.gz//g'`
     fi
 
-    if [ -d "$destDir" ]; then
+    if [[ -d "$destDir" ]]; then
       echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
     else
       tar xf $archive -C $familyDir
@@ -123,7 +123,7 @@ function copyFamilyAsFiles {
   for file in `ls -d $cloudDir/$1/$1*`; do
     fileName=$(echo $file | awk -F/ '{print $(NF)}')
     destFile=$familyDir/$fileName
-    if [ -f "$destFile" ]; then
+    if [[ -f "$destFile" ]]; then
       echo -e "${CYAN}File $destFile exists - skipping${NC}"
     else
       cp $file $familyDir
@@ -138,7 +138,7 @@ function copyFamilyAsDirs {
   for dir in `ls -d $cloudDir/$1/$1*`; do
     dirName=$(echo $dir | awk -F/ '{print $(NF)}')
     destDir=$familyDir/$dirName
-    if [ -d "$destDir" ]; then
+    if [[ -d "$destDir" ]]; then
       echo -e "${CYAN}Directory $destDir exists - skipping${NC}"
     else
       cp -R $dir ${familyDir%/}
@@ -169,7 +169,7 @@ function createVariables2 {
   echo "# $1" >> $varFile
   for specPath in `ls -d $familyDir/* 2>/dev/null`; do
     spec=`basename $specPath`
-    if [ "$3" == "" ]; then
+    if [[ "$3" == "" ]]; then
       version=$(echo $spec | awk -F- '{print $NF}')
     else
       version=$(eval " echo $spec | $3")
@@ -187,7 +187,7 @@ function createVariables2 {
     specHomeVar="${upperName}${version}_HOME"
     homeVar="${upperName}_HOME"
     echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-    if [ -d "$specPath/bin" ]; then
+    if [[ -d "$specPath/bin" ]]; then
       echo "alias use$2${compactVersion}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
     else
       echo "alias use$2${compactVersion}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
@@ -196,7 +196,7 @@ function createVariables2 {
 
   if [[ "$maxVersion" != "" ]]; then
     echo "export $homeVar=\$$specHomeVar" >> $varFile
-    if [ -d "$specPath/bin" ]; then
+    if [[ -d "$specPath/bin" ]]; then
       echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
     else
       echo "export PATH=\$$homeVar:\$PATH" >> $varFile
@@ -206,7 +206,7 @@ function createVariables2 {
 }
 
 function backslashWhenWindows {
-  if [ "$system" == "windows" ]; then
+  if [[ "$system" == "windows" ]]; then
     finalPath=$(echo "$1" | sed 's|/c|c:|g' | sed 's|/|\\|g')
   else
     finalPath="$1"
@@ -215,7 +215,7 @@ function backslashWhenWindows {
 }
 
 function driveNotationWhenWindows {
-  if [ "$system" == "windows" ]; then
+  if [[ "$system" == "windows" ]]; then
     finalPath=$(echo "$1" | sed 's|/c|c:|g')
   else
     finalPath="$1"
@@ -225,7 +225,7 @@ function driveNotationWhenWindows {
 
 # calculate system
 osname=`uname`
-if [ "$USERPROFILE" != "" ]; then
+if [[ "$USERPROFILE" != "" ]]; then
   system="windows"
   mainDir="/c"
   sedBackupSuffix=""
@@ -250,7 +250,7 @@ echo -e -n "${CYAN}Use ${mainDir}/pf directory [y/n]${NC} ($useStandardPfDirDefa
 read useStandardPfDir
 useStandardPfDir=${useStandardPfDir:-$useStandardPfDirDefault}
 
-if [ "$useStandardPfDir" == "y" ]; then
+if [[ "$useStandardPfDir" == "y" ]]; then
   pfDir=${mainDir}/pf
 else
   existingDirs=$(ls -d $mainDir/pf*)
