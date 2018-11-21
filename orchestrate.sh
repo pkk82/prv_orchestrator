@@ -161,6 +161,24 @@ function verifyVersion {
   done
 }
 
+# $1 - family
+# $2 - expected
+# $3 - actual
+# $4 - description
+
+function verify {
+  familyDir=$pfDir/$1
+  for spec in `ls -d $familyDir/*`; do
+    expected=$(eval echo "$spec | awk -F/ '{print $NF}' | $2")
+    actual=$(eval $spec/$3)
+    if [[ $actual == "$expected" ]]; then
+      echo -e "${GREEN}$1 $4 is correct for $spec - $actual${NC}"
+    else
+      echo -e "${RED}$1 $4 is not correct for $spec - expected: $expected, got: $actual${NC}"
+    fi
+  done
+}
+
 function createVariables2 {
   maxVersionToCompare=0
   maxVersion=""

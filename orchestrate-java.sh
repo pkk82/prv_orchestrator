@@ -74,43 +74,12 @@ for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
   fi
 done
 
-#verify java
-javaDir=$pfDir/java
-for specJava in `ls -d $javaDir/jdk-*`; do
-  echo -e "${CYAN}Verifying $specJava${NC}"
-  # verify version
-  javaOutput=`$specJava/bin/java -version 2>&1`
-  actualJavaVersion=`echo $javaOutput | grep -i version | awk '{print $3}' | tr -d '"'`
+verify java \
+  "awk -F- '{print \$(NF-1)}' | sed 's/^1\.//g' | sed 's/^/\"/g' | sed 's/$/\"/g'" \
+  "bin/java -version 2>&1 | grep -i 'version' | awk '{print \$3}' | sed 's/\+/u/g' | sed 's/1\.//g' | sed 's/\.0//g' | sed 's/_/u/g'" "version"
 
-  expectedJavaVersion=`echo $specJava | awk -F- '{print $(NF-1)}'`
-  majorMinor=`echo $expectedJavaVersion | awk -Fu '{print $1}'`
-  patch=`echo $expectedJavaVersion | awk -Fu '{print $2}'`
-  if [[ "$majorMinor" =~ [0-9]+\.[0-9]+\.[0-9] ]]; then
-    expectedJavaVersion="${majorMinor}_$patch"
-  elif [[ "$majorMinor" =~ [5678] ]]; then
-    expectedJavaVersion="1.$majorMinor.0_$patch"
-  else
-    expectedJavaVersion="$majorMinor.0.$patch"
-  fi
+verify java \
+  "awk -F- '{print \$NF}'" \
+  "bin/java -version 2>&1 | (grep -i '64-Bit' || echo 'i586') | sed s/.*64-Bit.*/x64/g"  "platform"
 
-  if [[ $actualJavaVersion == "$expectedJavaVersion" ]]; then
-    echo -e "    ${GREEN}Java version is correct - $actualJavaVersion${NC}"
-  else
-    echo -e "    ${RED}Java version is not correct - expected: $expectedJavaVersion, got: $actualJavaVersion${NC}"
-  fi
-  #verify platform
-  expectedPlatform=`echo $specJava | awk -F- '{print $NF}'`
-  is64=`echo $javaOutput -version 2>&1 | grep -i "64-Bit"`
-  actualPlatform="x64"
-  if [ "$is64" == ""  ]; then
-    actualPlatform="i586"
-  fi
-  if [ "$expectedPlatform" == "$actualPlatform" ]; then
-    echo -e "    ${GREEN}Java platform is correct - $actualPlatform${NC}"
-  else
-    echo -e "    ${RED}Java platform is not correct - expected: $expectedPlatform, got: $actualPlatform${NC}"
-  fi
-done
-
-#add java variables
 createVariables2 java java "sed 's/jdk-//g' | sed 's/1\.//g' | sed 's/\.[0-9]*//g' | sed 's/u[0-9]*//g' | sed 's/-i586/.x32/g' | sed 's/-x64/.x64/g'"
