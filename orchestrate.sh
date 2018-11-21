@@ -147,7 +147,7 @@ function copyFamilyAsDirs {
   done
 }
 
-function verify {
+function verifyVersion {
   familyDir=$pfDir/$1
   for spec in `ls -d $familyDir/*`; do
     expectedVersion1=`echo $spec | awk -F/ '{print $(NF)}' | awk -F- '{print $(NF)}'`

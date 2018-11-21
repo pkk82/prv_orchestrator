@@ -12,5 +12,5 @@ else
   prefix="bin/"
 fi
 
-verify nodejs "${prefix}node --version | sed 's|v||g'"
+verifyVersion nodejs "${prefix}node --version | sed 's|v||g'"
 createVariables2 nodejs nodejs

@@ -6,7 +6,7 @@ unzipFamily gradle
 ### verify gradle works with Java 8
 currentJavaVersion=$JAVA_HOME
 JAVA_HOME=$JAVA8_x64_HOME
-verify gradle "bin/gradle --version | grep Gradle | awk '{print \$2}'"
+verifyVersion gradle "bin/gradle --version | grep Gradle | awk '{print \$2}'"
 
 gradleDir=$pfDir/gradle
 ## verify gradle with appropriate Java version
