@@ -238,6 +238,7 @@ function createVariables {
     disc=$(eval " echo $spec | $4")
     if [[ $version -gt $maxVersion ]]; then
       maxVersion=$version
+      maxHomeVar="${upperName}${version}_${disc}_HOME"
     fi
     specHomeVar="${upperName}${version}_${disc}_HOME"
     homeVar="${upperName}_HOME"
@@ -249,14 +250,13 @@ function createVariables {
     fi
   done;
 
-  if [[ "$maxVersion" != "" ]]; then
-    echo "export $homeVar=\$$specHomeVar" >> $varFile
-    if [[ -d "$specPath/bin" ]]; then
-      echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
-    else
-      echo "export PATH=\$$homeVar:\$PATH" >> $varFile
-    fi
+  echo "export $homeVar=\$$maxHomeVar" >> $varFile
+  if [[ -d "$specPath/bin" ]]; then
+    echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
+  else
+    echo "export PATH=\$$homeVar:\$PATH" >> $varFile
   fi
+
   . $varFile
 }
 
