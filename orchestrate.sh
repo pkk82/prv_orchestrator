@@ -289,9 +289,13 @@ echo "export CLOUD_SOFTWARE_DIR=$cloudDir" > $varFile
 echo "export PF_DIR=$pfDir" >> $varFile
 
 . orchestrate-aliases.sh
-. orchestrate-java.sh
-. orchestrate-java-jce-policy.sh
+. orchestrate-java-oracle-windows.sh
+. orchestrate-java-oracle-mac.sh
+. orchestrate-java-oracle-linux.sh
+. orchestrate-java-oracle.sh
 . orchestrate-java-openjdk.sh
+. orchestrate-java-jce-policy.sh
+. orchestrate-java.sh
 . orchestrate-dtool.sh
 . orchestrate-ant.sh
 . orchestrate-kotlin.sh
