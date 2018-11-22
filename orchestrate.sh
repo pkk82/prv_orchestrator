@@ -223,6 +223,43 @@ function createVariables2 {
   . $varFile
 }
 
+# $1 - family
+# $2 - name
+# $3 - version extractor
+# #4 - additional discriminator
+function createVariables {
+  maxVersion=0
+  familyDir=$pfDir/$1
+  upperName=`echo $2 | awk '{print toupper($0)}'`
+  echo "# $1" >> $varFile
+  for specPath in `ls -d $familyDir/* 2>/dev/null`; do
+    spec=`basename $specPath`
+    version=$(eval " echo $spec | $3")
+    disc=$(eval " echo $spec | $4")
+    if [[ $version -gt $maxVersion ]]; then
+      maxVersion=$version
+    fi
+    specHomeVar="${upperName}${version}_${disc}_HOME"
+    homeVar="${upperName}_HOME"
+    echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+    if [[ -d "$specPath/bin" ]]; then
+      echo "alias use$2${version}${disc}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
+    else
+      echo "alias use$2${version}${disc}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
+    fi
+  done;
+
+  if [[ "$maxVersion" != "" ]]; then
+    echo "export $homeVar=\$$specHomeVar" >> $varFile
+    if [[ -d "$specPath/bin" ]]; then
+      echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
+    else
+      echo "export PATH=\$$homeVar:\$PATH" >> $varFile
+    fi
+  fi
+  . $varFile
+}
+
 function backslashWhenWindows {
   if [[ "$system" == "windows" ]]; then
     finalPath=$(echo "$1" | sed 's|/c|c:|g' | sed 's|/|\\|g')
