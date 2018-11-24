@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+
+# update apt-get
+sudo apt-get update
+
 # install 32bit architecture
 sudo dpkg --add-architecture i386
 sudo apt-get update
@@ -42,3 +46,8 @@ gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-up "['<Alt><S
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-down "['<Alt><Super>l']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Alt><Super>m']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Alt><Super>period']"
+
+# install ansible
+sudo apt-get install software-properties-common
+sudo apt-add-repository --yes --update ppa:ansible/ansible
+sudo apt-get install ansible
