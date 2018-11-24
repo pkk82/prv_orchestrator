@@ -59,3 +59,6 @@ wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key a
 sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" >> /etc/apt/sources.list'
 sudo apt-get update
 sudo apt-get install virtualbox-5.2
+
+# install gnu-smalltalk
+sudo apt install gnu-smalltalk
