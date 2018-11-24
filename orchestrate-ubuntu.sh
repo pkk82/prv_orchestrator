@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # update apt-get
-sudo apt-get update
+sudo apt-get update && sudo apt-get dist-upgrade && sudo apt-get autoremove
 
 # install 32bit architecture
 sudo dpkg --add-architecture i386
@@ -51,3 +51,11 @@ gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Alt
 sudo apt-get install software-properties-common
 sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt-get install ansible
+
+# install virtual box
+sudo apt-get -y install gcc make linux-headers-$(uname -r) dkms
+wget -q https://www.virtualbox.org/download/oracle_vbox_2016.asc -O- | sudo apt-key add -
+wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+sudo sh -c 'echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" >> /etc/apt/sources.list'
+sudo apt-get update
+sudo apt-get install virtualbox-5.2
