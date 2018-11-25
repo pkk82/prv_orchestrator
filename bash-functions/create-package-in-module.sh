@@ -30,25 +30,44 @@ function create-package-in-module {
     dir=`pwd`
     dir=`basename $dir`
 
-    module=`echo $dir | cut -d _ -f1`
-    if [[ $module =~ ^[0-9]+$ ]]; then
-      packageName="$packageName.m$module"
+    if [[ $packageName =~ ^.*pluralsight.*$ ]]; then
+      module=`echo $dir | cut -d _ -f1`
+      if [[ $module =~ ^[0-9]+$ ]]; then
+        packageName="$packageName.m$module"
+      fi
+
+      clip=`echo $dir | cut -d _ -f2`
+      if [[ $clip =~ ^[0-9]+$ ]]; then
+        packageName="$packageName.c$clip"
+      fi
     fi
 
-    clip=`echo $dir | cut -d _ -f2`
-    if [[ $clip =~ ^[0-9]+$ ]]; then
-      packageName="$packageName.c$clip"
+    if [[ $packageName =~ ^.*books.*$ ]]; then
+      chapter=`echo $dir | cut -d _ -f1`
+      if [[ $chapter =~ ^[0-9]+$ ]]; then
+        packageName="$packageName.ch$chapter"
+      fi
+
+      paragraph=`echo $dir | cut -d _ -f2`
+      if [[ $paragraph =~ ^[0-9]+$ ]]; then
+        packageName="$packageName.p$paragraph"
+      fi
+
+      subParagraph=`echo $dir | cut -d _ -f3`
+      if [[ $subParagraph =~ ^[0-9]+$ ]]; then
+        packageName="$packageName.sp$subParagraph"
+      fi
     fi
 
     packageDir=`echo $packageName | sed 's|\.|/|g'`
     mkdir -p src/$kindDir/$lang/$packageDir
 
     fileName=`echo $dir | awk -F_ '{print $NF}'`
-    if [ "$kindDir" == "test" ]; then
+    if [[ "$kindDir" == "test" ]]; then
       fileName="${fileName}Test"
     fi
 
-    if [ "$lang" == "java" ]; then
+    if [[ "$lang" == "java" ]]; then
       fileName="$fileName.java"
       echo "package $packageName;" >> src/$kindDir/$lang/$packageDir/$fileName
     else
