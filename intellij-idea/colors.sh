@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-file=$intellijOptionsDir/colors.scheme.xml.xml
+file=$intellijOptionsDir/colors.scheme.xml
 
 cat > $file << EOL
 <application>
