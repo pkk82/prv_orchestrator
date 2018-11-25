@@ -48,12 +48,6 @@ if [ "$configureIntellij" == "y" ]; then
 
 fi;
 
-# // TODO add memory customization
-# cat > ~/.IntelliJIdea2018.2/config/idea64.vmoptions << EOL
-# -Xms512m
-# -Xmx2048m
-# EOL
-
 # // TODO generate launcher
 # sudo cat > /usr/share/applications/intellij.desktop << EOL
 # [Desktop Entry]
