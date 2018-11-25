@@ -326,7 +326,6 @@ echo "export CLOUD_SOFTWARE_DIR=$cloudDir" > $varFile
 echo "export PF_DIR=$pfDir" >> $varFile
 
 . orchestrate-aliases.sh
-. orchestrate-intellij-idea-linux.sh
 . orchestrate-java-oracle-windows.sh
 . orchestrate-java-oracle-mac.sh
 . orchestrate-java-oracle-linux.sh
@@ -347,6 +346,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-kafka.sh
 . orchestrate-nodejs.sh
 . orchestrate-vscode.sh
+. orchestrate-intellij-idea-linux.sh
 . orchestrate-intellij-idea-settings.sh
 . orchestrate-atom.sh
 . orchestrate-password.sh
