@@ -20,11 +20,14 @@ if [[ "$system" == "linux" ]]; then
 EOL
 
     # create desktop launchers
+    envVariable=`cat "$HOME/.bash_variables" | grep -v "PATH" | grep -v "#" | sed 's/export/env/g' | tr '\n' ' '`
+
+
     desktop=`cat << EOL
 [Desktop Entry]
 Name=IntelliJ $version
 Comment=Intellij $version
-Exec=$spec/bin/idea.sh
+Exec=$envVariable $spec/bin/idea.sh
 Icon=$spec/bin/idea.png
 Terminal=false
 Type=Application
