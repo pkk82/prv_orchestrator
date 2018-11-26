@@ -83,3 +83,7 @@ sudo chmod g+rwx "$HOME/.docker" -R
 
 # run docker on startup
 sudo systemctl enable docker
+
+# install kubernetes
+sudo snap install kubectl --classic
+
