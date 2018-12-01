@@ -101,7 +101,9 @@ function untarFamily {
       destDir=`eval "echo $destDir | $3"`
       destDir=`echo $destDir | sed 's/.tar.gz//g'`
     fi
-
+    if [[ "$2" == "" && "$3" == "" ]]; then
+      destDir=$familyDir/$dirInArch
+    fi
     if [[ -d "$destDir" ]]; then
       echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
     else
@@ -235,12 +237,15 @@ function createVariables {
   for specPath in `ls -d $familyDir/* 2>/dev/null`; do
     spec=`basename $specPath`
     version=$(eval " echo $spec | $3")
-    disc=$(eval " echo $spec | $4")
+    if [[ "$4" != "" ]]; then
+      disc=$(eval " echo $spec | $4")
+      discPartVar="_$disc"
+    fi
     if [[ $version -gt $maxVersion ]]; then
       maxVersion=$version
-      maxHomeVar="${upperName}${version}_${disc}_HOME"
+      maxHomeVar="${upperName}${version}${discPartVar}_HOME"
     fi
-    specHomeVar="${upperName}${version}_${disc}_HOME"
+    specHomeVar="${upperName}${version}${discPartVar}_HOME"
     homeVar="${upperName}_HOME"
     echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
     if [[ -d "$specPath/bin" ]]; then
@@ -352,5 +357,6 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-password.sh
 . orchestrate-backups-script.sh
 . orchestrate-postgres.sh
+. orchestrate-open-shift.sh
 . orchestrate-functions.sh
 . orchestrate-bashrc.sh
