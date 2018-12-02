@@ -23,7 +23,7 @@ function create-package-in-module {
     dir=`dirname $dir`
     packageName=''
     while [[ "$dir" != *"workspace" ]]; do
-      packageName="`basename $dir`.$packageName"
+      packageName="`basename $dir | sed 's/[.]//g'`.$packageName"
       dir=`dirname $dir`
     done
     packageName=`echo $packageName | sed 's/.$//g' | sed 's/[-_]//g' | sed 's/c\.pl/pluralsight/g'`
