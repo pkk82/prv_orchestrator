@@ -18,10 +18,10 @@ for specGradle in `ls -d $gradleDir/*`; do
 		JAVA_HOME=$JAVA5_x64_HOME
 	elif (( major <= 2 )) && [ ! -z $JAVA6_x64_HOME ]; then
 		JAVA_HOME=$JAVA6_x64_HOME
-	elif (( major <= 3 )) && [ ! -z $JAVA7_x64_HOME ]; then
+	elif (( major <= 4 )) && [ ! -z $JAVA7_x64_HOME ]; then
 		JAVA_HOME=$JAVA7_x64_HOME
 	else
-		JAVA_HOME=$JAVA7_x64_HOME
+		JAVA_HOME=$JAVA8_x64_HOME
 	fi
 
 	# verify version with specific java version
