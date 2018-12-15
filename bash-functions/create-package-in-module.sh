@@ -26,7 +26,7 @@ function create-package-in-module {
       packageName="`basename $dir | sed 's/[.]//g'`.$packageName"
       dir=`dirname $dir`
     done
-    packageName=`echo $packageName | sed 's/.$//g' | sed 's/[-_]//g' | sed 's/c\.pl/pluralsight/g'`
+    packageName=`echo $packageName | sed 's/.$//g' | sed 's/[-_]//g' | sed 's/c\.pl/pluralsight/g'` | sed 's/books\.\([^.]*\)\.main/books.\1/g'
     dir=`pwd`
     dir=`basename $dir`
 
