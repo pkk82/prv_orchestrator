@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 verify java \
-  "awk -F- '{print \$(NF-1)}' | sed 's/^1\.//g' | sed 's/^/\"/g' | sed 's/$/\"/g'" \
-  "bin/java -version 2>&1 | grep -i 'version' | awk '{print \$3}' | sed 's/\+/u/g' | sed 's/1\.//g' | sed 's/\.0//g' | sed 's/_/u/g'" \
+  "awk -F- '{print \$(NF-1)}' | sed 's/^1\.//g' | sed 's/^/\"/g' | sed 's/$/\"/g' | sed 's/u/./g' " \
+  "bin/java -version 2>&1 | grep -i 'version' | awk '{print \$3}' | sed 's/\+/./g' | sed 's/1\.//g' | sed 's/\.0//g' | sed 's/_/./g'" \
   "version"
 
 verify java \
