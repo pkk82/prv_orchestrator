@@ -36,19 +36,5 @@ done
 JAVA_HOME=$currentJavaVersion
 
 
-#add gradle variables
-maxVersion=0
-echo "# gradle" >> $varFile
-for specGradle in `ls -d $gradleDir/*`; do
-	gradleVersion=$(echo $specGradle | awk -F/ '{print $(NF)}' | sed 's/gradle-\(.*\)/\1/')
-	major=$(echo $gradleVersion | cut -d'.' -f1)
-
-	if [[ $major -gt $maxVersion ]]; then
-		maxVersion=$major
-	else
-		sed -i $sedBackupSuffix /GRADLE${major}_HOME=/d $varFile
-	fi
-	echo "export GRADLE${major}_HOME=$specGradle" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
-done;
-echo "export GRADLE_HOME=\$GRADLE${maxVersion}_HOME" >> $varFile
-echo "export PATH=\$GRADLE_HOME/bin:\$PATH" >> $varFile
+createVariables gradle gradle \
+  "awk -F- '{print \$NF}' | cut -d. -f1"

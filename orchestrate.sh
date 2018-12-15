@@ -230,23 +230,23 @@ function createVariables2 {
 # $3 - version extractor
 # #4 - additional discriminator
 function createVariables {
-  maxVersion=0
-  familyDir=$pfDir/$1
-  upperName=`echo $2 | awk '{print toupper($0)}'`
+  local maxVersion=0
+  local familyDir=$pfDir/$1
+  local upperName=`echo $2 | awk '{print toupper($0)}'`
   echo "# $1" >> $varFile
   for specPath in `ls -d $familyDir/* 2>/dev/null`; do
-    spec=`basename $specPath`
-    version=$(eval " echo $spec | $3")
+    local spec=`basename $specPath`
+    local version=$(eval " echo $spec | $3")
     if [[ "$4" != "" ]]; then
-      disc=$(eval " echo $spec | $4")
-      discPartVar="_$disc"
+      local disc=$(eval " echo $spec | $4")
+      local discPartVar="_$disc"
     fi
     if [[ $version -gt $maxVersion ]]; then
       maxVersion=$version
-      maxHomeVar="${upperName}${version}${discPartVar}_HOME"
+      local maxHomeVar="${upperName}${version}${discPartVar}_HOME"
     fi
-    specHomeVar="${upperName}${version}${discPartVar}_HOME"
-    homeVar="${upperName}_HOME"
+    local specHomeVar="${upperName}${version}${discPartVar}_HOME"
+    local homeVar="${upperName}_HOME"
     echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
     if [[ -d "$specPath/bin" ]]; then
       echo "alias use$2${version}${disc}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
