@@ -68,8 +68,15 @@ function create-package-in-module {
     fi
 
     if [[ "$lang" == "java" ]]; then
-      fileName="$fileName.java"
-      echo "package $packageName;" >> src/$kindDir/$lang/$packageDir/$fileName
+
+      cat > src/$kindDir/$lang/$packageDir/$fileName.java << EOL
+package $packageName;
+
+public class $fileName {
+    public static void main(String[] args) {
+    }
+}
+EOL
     else
       fileName="$fileName.kt"
       echo "package $packageName" >> src/$kindDir/$lang/$packageDir/$fileName
