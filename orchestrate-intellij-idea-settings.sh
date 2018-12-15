@@ -1,49 +1,40 @@
 #!/usr/bin/env bash
 
-configureIntellijDefault="n"
-echo -e -n "${CYAN}Configure intellij idea settings [y/n]${NC} ($configureIntellijDefault): "
-read configureIntellij
-configureIntellij=${configureIntellij:-$configureIntellijDefault}
+existingDirs=`ls -d $HOME/.IntelliJIdea* $HOME/.intellij-idea* $HOME/Library/Preferences/IntelliJIdea* 2>/dev/null`
+intellijHomeDirDefault=`ls -d $HOME/.IntelliJIdea* $HOME/.intellij-idea* $HOME/Library/Preferences/IntelliJIdea* 2>/dev/null | sort | tail -n 1`
 
-if [ "$configureIntellij" == "y" ]; then
+echo "Existing Intellij Idea directories:"
+echo "$existingDirs"
+if [ "$intellijHomeDirDefault" == "" ]; then
+  echo -e -n "${CYAN}Enter path to intellij home directory${NC}: "
+else
+  echo -e -n "${CYAN}Enter path to intellij home directory${NC} ($intellijHomeDirDefault): "
+fi
 
-  existingDirs=`ls -d $HOME/.IntelliJIdea* $HOME/.intellij-idea* $HOME/Library/Preferences/IntelliJIdea* 2>/dev/null`
-  intellijHomeDirDefault=`ls -d $HOME/.IntelliJIdea* $HOME/.intellij-idea* $HOME/Library/Preferences/IntelliJIdea* 2>/dev/null | sort | tail -n 1`
+read intellijHomeDir
+intellijHomeDir=${intellijHomeDir:-$intellijHomeDirDefault}
+makeDir $intellijHomeDir
 
-  echo "Existing Intellij Idea directories:"
-  echo "$existingDirs"
-  if [ "$intellijHomeDirDefault" == "" ]; then
-    echo -e -n "${CYAN}Enter path to intellij home directory${NC}: "
-  else
-    echo -e -n "${CYAN}Enter path to intellij home directory${NC} ($intellijHomeDirDefault): "
-  fi
+if [ "$system" = "mac" ]; then
+  intellijWorkingDir=$intellijHomeDir
+else
+  intellijWorkingDir=$intellijHomeDir/config
+fi
 
-  read intellijHomeDir
-  intellijHomeDir=${intellijHomeDir:-$intellijHomeDirDefault}
-  makeDir $intellijHomeDir
+intellijOptionsDir=$intellijWorkingDir/options
+makeDir $intellijOptionsDir
 
-  if [ "$system" = "mac" ]; then
-    intellijWorkingDir=$intellijHomeDir
-  else
-    intellijWorkingDir=$intellijHomeDir/config
-  fi
+intellijInspectionDir=$intellijWorkingDir/inspection
+makeDir $intellijInspectionDir
 
-  intellijOptionsDir=$intellijWorkingDir/options
-  makeDir $intellijOptionsDir
+intellijKeymapsDir=$intellijWorkingDir/keymaps
+makeDir $intellijKeymapsDir
 
-  intellijInspectionDir=$intellijWorkingDir/inspection
-  makeDir $intellijInspectionDir
+intellijTemplatesDir=$intellijWorkingDir/templates
+makeDir $intellijTemplatesDir
 
-  intellijKeymapsDir=$intellijWorkingDir/keymaps
-  makeDir $intellijKeymapsDir
+makeDir $intellijOptionsDir
 
-  intellijTemplatesDir=$intellijWorkingDir/templates
-  makeDir $intellijTemplatesDir
-
-  makeDir $intellijOptionsDir
-
-  for shFile in `ls ./intellij-idea/*.sh`; do
-    . $shFile
-  done
-
-fi;
+for shFile in `ls ./intellij-idea/*.sh`; do
+  . $shFile
+done
