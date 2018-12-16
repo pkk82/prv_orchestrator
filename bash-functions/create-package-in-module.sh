@@ -26,7 +26,7 @@ function create-package-in-module {
       packageName="`basename $dir | sed 's/[.]//g'`.$packageName"
       dir=`dirname $dir`
     done
-    packageName=`echo $packageName | sed 's/.$//g' | sed 's/[-_]//g' | sed 's/c\.pl/pluralsight/g'` | sed 's/books\.\([^.]*\)\.main/books.\1/g'
+    packageName=`echo $packageName | sed 's/.$//g' | sed 's/[-_]//g' | sed 's/c\.pl/pluralsight/g' | sed 's/books\.\([^.]*\)\.main/books.\1/g'`
     dir=`pwd`
     dir=`basename $dir`
 
@@ -40,9 +40,7 @@ function create-package-in-module {
       if [[ $clip =~ ^[0-9]+$ ]]; then
         packageName="$packageName.c$clip"
       fi
-    fi
-
-    if [[ $packageName =~ ^.*books.*$ ]]; then
+    elif [[ $packageName =~ ^.*books.*$ ]]; then
       chapter=`echo $dir | cut -d _ -f1`
       if [[ $chapter =~ ^[0-9]+$ ]]; then
         packageName="$packageName.ch$chapter"
@@ -57,6 +55,9 @@ function create-package-in-module {
       if [[ $subParagraph =~ ^[0-9]+$ ]]; then
         packageName="$packageName.sp$subParagraph"
       fi
+    else
+      firstDir=`echo $dir | sed 's/[-_.]//g'`
+      packageName="$packageName.$firstDir"
     fi
 
     packageDir=`echo $packageName | sed 's|\.|/|g'`
