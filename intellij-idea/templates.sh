@@ -11,3 +11,15 @@ cat > $javaScriptXmlFile << EOL
   </template>
 </templateSet>
 EOL
+
+surroundXmlFile=$intellijTemplatesDir/surround.xml
+
+cat > $surroundXmlFile << EOL
+<templateSet group="surround">
+  <template name="PL" value="System.out.println(\$SELECTION\$)" description="Surround with println" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_STATEMENT" value="true" />
+    </context>
+  </template>
+</templateSet>
+EOL
