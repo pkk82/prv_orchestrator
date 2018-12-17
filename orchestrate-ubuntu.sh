@@ -47,8 +47,8 @@ gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-down "['<Alt>
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Alt><Super>m']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Alt><Super>period']"
 
-gsettings set org.cinnamon.desktop.keybindings.media-keys terminal "['<Primary>t']"
-gsettings set org.gnome.settings-daemon.plugins.media-keys terminal '<Primary>t'
+gsettings set org.cinnamon.desktop.keybindings.media-keys terminal "['<Primary><Shift>t']"
+gsettings set org.gnome.settings-daemon.plugins.media-keys terminal '<Primary><Shift>t'
 
 # install ansible
 sudo apt-get install software-properties-common
