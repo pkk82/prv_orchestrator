@@ -86,34 +86,37 @@ function unzipFamily {
 # $2 - dirInArch transformation
 # $3 - archive name transformation
 function untarFamily {
-  familyDir=$pfDir/$1
-  makeDir $familyDir
-  for archive in `ls $cloudDir/$1/*.tar.gz $cloudDir/$1/$system/*.tar.gz $cloudDir/$1/*.tar.xz $cloudDir/$1/$system/*.tar.xz 2>/dev/null`; do
-    dirInArch=`tar -tf $archive | awk -F/ '{print $1}' | uniq | head -n 1`
-    dirInArch=${dirInArch%/}
-    archiveName=`echo $archive | awk -F/ '{print $NF}'`
-    if [[ "$2" != "" ]]; then
-      destDir=$familyDir/$dirInArch
-      destDir=`eval "echo $destDir | $2"`
-    fi
-    if [[ "$3" != "" ]]; then
-      destDir=$familyDir/$archiveName
-      destDir=`eval "echo $destDir | $3"`
-      destDir=`echo $destDir | sed 's/.tar.gz//g'`
-    fi
-    if [[ "$2" == "" && "$3" == "" ]]; then
-      destDir=$familyDir/$dirInArch
-    fi
-    if [[ -d "$destDir" ]]; then
-      echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
-    else
-      tar xf $archive -C $familyDir
-      if [[ "$2" != "" || "$3" != "" ]]; then
-        mv $familyDir/$dirInArch $destDir
+  archives=`ls $cloudDir/$1/*.tar.gz $cloudDir/$1/$system/*.tar.gz $cloudDir/$1/*.tar.xz $cloudDir/$1/$system/*.tar.xz 2>/dev/null`
+  if [[ "$archives" != "" ]]; then
+    familyDir=$pfDir/$1
+    makeDir $familyDir
+    for archive in ; do
+      dirInArch=`tar -tf $archive | awk -F/ '{print $1}' | uniq | head -n 1`
+      dirInArch=${dirInArch%/}
+      archiveName=`echo $archive | awk -F/ '{print $NF}'`
+      if [[ "$2" != "" ]]; then
+        destDir=$familyDir/$dirInArch
+        destDir=`eval "echo $destDir | $2"`
       fi
-      echo "$dirInArch extracted to $familyDir as $destDir"
-    fi
-  done
+      if [[ "$3" != "" ]]; then
+        destDir=$familyDir/$archiveName
+        destDir=`eval "echo $destDir | $3"`
+        destDir=`echo $destDir | sed 's/.tar.gz//g'`
+      fi
+      if [[ "$2" == "" && "$3" == "" ]]; then
+        destDir=$familyDir/$dirInArch
+      fi
+      if [[ -d "$destDir" ]]; then
+        echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
+      else
+        tar xf $archive -C $familyDir
+        if [[ "$2" != "" || "$3" != "" ]]; then
+          mv $familyDir/$dirInArch $destDir
+        fi
+        echo "$dirInArch extracted to $familyDir as $destDir"
+      fi
+    done
+  fi
 }
 
 
@@ -170,7 +173,7 @@ function verifyVersion {
 
 function verify {
   familyDir=$pfDir/$1
-  for spec in `ls -d $familyDir/*`; do
+  for spec in `ls -d $familyDir/* 2>/dev/null`; do
     expected=$(eval echo "$spec | awk -F/ '{print $NF}' | $2")
     actual=$(eval $spec/$3)
     if [[ $actual == "$expected" ]]; then
@@ -230,39 +233,42 @@ function createVariables2 {
 # $3 - version extractor
 # #4 - additional discriminator
 function createVariables {
-  local maxVersion=0
-  local familyDir=$pfDir/$1
-  local upperName=`echo $2 | awk '{print toupper($0)}'`
-  echo "# $1" >> $varFile
-  for specPath in `ls -d $familyDir/* 2>/dev/null`; do
-    local spec=`basename $specPath`
-    local version=$(eval " echo $spec | $3")
-    if [[ "$4" != "" ]]; then
-      local disc=$(eval " echo $spec | $4")
-      local discPartVar="_$disc"
-    fi
-    if [[ $version -gt $maxVersion ]]; then
-      maxVersion=$version
-      local maxHomeVar="${upperName}${version}${discPartVar}_HOME"
-    fi
-    local specHomeVar="${upperName}${version}${discPartVar}_HOME"
-    local homeVar="${upperName}_HOME"
-    echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+  specDirs=`ls -d $familyDir/* 2>/dev/null`
+  if [[ "$specDirs" != "" ]]; then
+    local maxVersion=0
+    local familyDir=$pfDir/$1
+    local upperName=`echo $2 | awk '{print toupper($0)}'`
+    echo "# $1" >> $varFile
+    for specPath in $specDirs; do
+      local spec=`basename $specPath`
+      local version=$(eval " echo $spec | $3")
+      if [[ "$4" != "" ]]; then
+        local disc=$(eval " echo $spec | $4")
+        local discPartVar="_$disc"
+      fi
+      if [[ $version -gt $maxVersion ]]; then
+        maxVersion=$version
+        local maxHomeVar="${upperName}${version}${discPartVar}_HOME"
+      fi
+      local specHomeVar="${upperName}${version}${discPartVar}_HOME"
+      local homeVar="${upperName}_HOME"
+      echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+      if [[ -d "$specPath/bin" ]]; then
+        echo "alias use$2${version}${disc}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
+      else
+        echo "alias use$2${version}${disc}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
+      fi
+    done;
+
+    echo "export $homeVar=\$$maxHomeVar" >> $varFile
     if [[ -d "$specPath/bin" ]]; then
-      echo "alias use$2${version}${disc}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
+      echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
     else
-      echo "alias use$2${version}${disc}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
+      echo "export PATH=\$$homeVar:\$PATH" >> $varFile
     fi
-  done;
 
-  echo "export $homeVar=\$$maxHomeVar" >> $varFile
-  if [[ -d "$specPath/bin" ]]; then
-    echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
-  else
-    echo "export PATH=\$$homeVar:\$PATH" >> $varFile
+    . $varFile
   fi
-
-  . $varFile
 }
 
 function backslashWhenWindows {
