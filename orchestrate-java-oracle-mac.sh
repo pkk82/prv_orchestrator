@@ -7,7 +7,7 @@ if [[ "$system" == "mac" ]]; then
   makeDir $javaDir
 
   for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
-    mountDir=`hdiutil attach $javaDmg | awk 'FNR==2{print substr($0, index($0, $3))}'`;
+    mountDir=`hdiutil attach $javaDmg | grep 'Apple_HFS' | awk '{print substr($0, index($0, $3))}'`;
     mainPkgFile=`find "${mountDir}" -name "*.pkg" 2>/dev/null | head -n 1`
     version=`echo $javaDmg | awk -F- '{print $(NF-2)}'`
     majorVersion=`echo $version | awk -Fu '{print $1}'`
@@ -27,7 +27,7 @@ if [[ "$system" == "mac" ]]; then
       payloadFile="${jdkPkgFile}/Payload"
       mkdir /tmp/$destFolder-unzipped
       mkdir "$javaDir/$destFolder"
-      tar -zxf $payloadFile -C /tmp/$destFolder-unzipped
+      tar -zxf "$payloadFile" -C "/tmp/$destFolder-unzipped"
       cp -R /tmp/$destFolder-unzipped/Contents/Home/* "$javaDir/$destFolder/"
     fi
     hdiutil detach "$mountDir"
