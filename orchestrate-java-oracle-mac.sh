@@ -30,5 +30,6 @@ if [[ "$system" == "mac" ]]; then
       tar -zxf $payloadFile -C /tmp/$destFolder-unzipped
       cp -R /tmp/$destFolder-unzipped/Contents/Home/* "$javaDir/$destFolder/"
     fi
+    hdiutil detach "$mountDir"
   done
 fi
