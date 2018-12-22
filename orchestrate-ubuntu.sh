@@ -95,3 +95,6 @@ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.30.0/minik
 
 # install xclip
 sudo apt install xclip
+
+# install heroku
+sudo snap install --classic heroku
