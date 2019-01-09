@@ -41,17 +41,17 @@ function create-package-in-module {
         packageName="$packageName.c$clip"
       fi
     elif [[ $packageName =~ ^.*books.*$ ]]; then
-      chapter=`echo $dir | cut -d _ -f1`
+      chapter=`echo $dir | sed 's/-/_/g' | cut -d_ -f1`
       if [[ $chapter =~ ^[0-9]+$ ]]; then
         packageName="$packageName.ch$chapter"
       fi
 
-      paragraph=`echo $dir | cut -d _ -f2`
+      paragraph=`echo $dir | sed 's/-/_/g' | cut -d_ -f2`
       if [[ $paragraph =~ ^[0-9]+$ ]]; then
         packageName="$packageName.p$paragraph"
       fi
 
-      subParagraph=`echo $dir | cut -d _ -f3`
+      subParagraph=`echo $dir | sed 's/-/_/g' | cut -d_ -f3`
       if [[ $subParagraph =~ ^[0-9]+$ ]]; then
         packageName="$packageName.sp$subParagraph"
       fi
