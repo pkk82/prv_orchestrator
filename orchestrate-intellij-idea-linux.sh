@@ -38,6 +38,6 @@ EOL`
   done
 
   createVariables2 intellij-idea intellij
-  echo "alias ii='\$INTELLIJ_HOME/bin/idea.sh . &'" >> $aliasesFile
+  echo "alias ii='\$INTELLIJ_HOME/bin/idea.sh ../\$(basename \`pwd\`) &'" >> $aliasesFile
 
 fi
