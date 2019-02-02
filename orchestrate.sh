@@ -90,7 +90,7 @@ function untarFamily {
   if [[ "$archives" != "" ]]; then
     familyDir=$pfDir/$1
     makeDir $familyDir
-    for archive in ; do
+    for archive in $archives; do
       dirInArch=`tar -tf $archive | awk -F/ '{print $1}' | uniq | head -n 1`
       dirInArch=${dirInArch%/}
       archiveName=`echo $archive | awk -F/ '{print $NF}'`
