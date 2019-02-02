@@ -1,4 +1,30 @@
 #!/usr/bin/env bash
+
+
+mvnPrvRepoUsername="pkk82"
+
+mvnPrvRepoId="nexus.prv"
+mvnPrvRepoUrl_="https://pkk82.pl/nexus"
+mvnPrvRepoUrl="$mvnPrvRepoUrl_/repository/maven-group"
+
+mvnPrvRepoReleaseId="nexus.prv.release"
+mvnPrvRepoReleaseUrl="$mvnPrvRepoUrl_/repository/maven-releases"
+
+mvnPrvRepoSnapshotId="nexus.prv.snapshot"
+mvnPrvRepoSnapshotUrl="$mvnPrvRepoUrl_/repository/maven-snapshots"
+
+echo "export MVN_PRV_REPO_USERNAME=$mvnPrvRepoUsername" >> $varFile
+
+echo "export MVN_PRV_REPO_ID=$mvnPrvRepoId" >> $varFile
+echo "export MVN_PRV_REPO_URL=$mvnPrvRepoUrl" >> $varFile
+
+echo "export MVN_PRV_REPO_RELEASE_ID=$mvnPrvRepoReleaseId" >> $varFile
+echo "export MVN_PRV_REPO_RELEASE_URL=$mvnPrvRepoReleaseUrl" >> $varFile
+
+echo "export MVN_PRV_REPO_SNAPSHOT_ID=$mvnPrvRepoSnapshotId" >> $varFile
+echo "export MVN_PRV_REPO_SNAPSHOT_URL=$mvnPrvRepoSnapshotUrl" >> $varFile
+
+
 configureMvnDefault="n"
 echo -e -n "${CYAN}Configure maven settings [y/n]${NC} ($configureMvnDefault): "
 read configureMvn
@@ -32,20 +58,21 @@ cat >> $mvnSecuritySettings << EOL
 </settingsSecurity>
 EOL
 
-  echo -e -n "${CYAN}Nexus (pkk@oss.sonatype.org) password: ${NC}"
-  read -s ossSonatypePassword
+
+  ossSonatypePassword=`askPassword "Public repo (pkk@oss.sonatype.org) password"`
+  printf "\n"
   encryptedOssSonatypePassword=$($MVN_HOME/bin/mvn --encrypt-password $ossSonatypePassword)
 
-  echo -e -n "\n${CYAN}Nexus (pkk82@nexus.pkk82.pl) password: ${NC}"
-  read -s nexusCloudPassword
-  encryptedNexusCloudPassword=$($MVN_HOME/bin/mvn --encrypt-password $nexusCloudPassword)
+  mvnPrvRepoPassword=`askPassword "Prv repo ($mvnPrvRepoUsername@$mvnPrvRepoUrl)"`
+  printf "\n"
+  mvnPrvRepoPasswordEncrypted=$($MVN_HOME/bin/mvn --encrypt-password $mvnPrvRepoPassword)
 
-  echo -e -n "\n${CYAN}Docker (pkk82@docker.io) password: ${NC}"
-  read -s dockerIoPassword
+  dockerIoPassword=`askPassword "Docker (pkk82@docker.io) password"`
+  printf "\n"
   encryptedDockerIoPassword=$($MVN_HOME/bin/mvn --encrypt-password $dockerIoPassword)
 
-  echo -e -n "\n${CYAN}Local gpg password: ${NC}"
-  read -s gpgKeyPassphrase
+  gpgKeyPassphrase=`askPassword "Local gpg password"`
+  printf "\n"
   encryptedGpgKeyPassphrase=$($MVN_HOME/bin/mvn --encrypt-password $gpgKeyPassphrase)
 
 cat > $mvnSettings << EOL
@@ -65,19 +92,19 @@ cat > $mvnSettings << EOL
             <password>$encryptedDockerIoPassword</password>
         </server>
         <server>
-            <id>pkk82-nexus</id>
-            <username>pkk82</username>
-            <password>$encryptedNexusCloudPassword</password>
+            <id>$mvnPrvRepoId</id>
+            <username>$mvnPrvRepoUsername</username>
+            <password>$mvnPrvRepoPasswordEncrypted</password>
         </server>
         <server>
-            <id>pkk82-nexus-snapshots</id>
-            <username>pkk82</username>
-            <password>$encryptedNexusCloudPassword</password>
+            <id>$mvnPrvRepoReleaseUrl</id>
+            <username>$mvnPrvRepoUsername</username>
+            <password>$mvnPrvRepoPasswordEncrypted</password>
         </server>
         <server>
-            <id>pkk82-nexus-releases</id>
-            <username>pkk82</username>
-            <password>$encryptedNexusCloudPassword</password>
+            <id>$mvnPrvRepoSnapshotId</id>
+            <username>$mvnPrvRepoUsername</username>
+            <password>$mvnPrvRepoPasswordEncrypted</password>
         </server>
         <server>
             <id>pkk82-nexus-public</id>
@@ -91,19 +118,20 @@ cat > $mvnSettings << EOL
     </servers>
     <profiles>
         <profile>
-            <id>repo-pkk82-nexus</id>
+            <id>repo.prv</id>
             <repositories>
                 <repository>
-                    <id>pkk82-nexus</id>
-                    <url>https://pkk82.pl/nexus/repository/maven-group</url>
+                    <id>$mvnPrvRepoId</id>
+                    <url>$mvnPrvRepoUrl</url>
                 </repository>
             </repositories>
             <properties>
-                <repo.url>https://pkk82.pl/nexus</repo.url>
-                <repo.snapshot.id>pkk82-nexus-snapshots</repo.snapshot.id>
-                <repo.snapshot.url>https://pkk82.pl/nexus/repository/maven-snapshots</repo.snapshot.url>
-                <repo.release.id>pkk82-nexus-releases</repo.release.id>
-                <repo.release.url>https://pkk82.pl/nexus/repository/maven-releases</repo.release.url>
+                <repo.id>$mvnPrvRepoId</repo.id>
+                <repo.url>$mvnPrvRepoUrl_</repo.url>
+                <repo.snapshot.id>$mvnPrvRepoSnapshotId</repo.snapshot.id>
+                <repo.snapshot.url>$mvnPrvRepoSnapshotUrl</repo.snapshot.url>
+                <repo.release.id>$mvnPrvRepoReleaseId</repo.release.id>
+                <repo.release.url>$mvnPrvRepoReleaseUrl</repo.release.url>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
