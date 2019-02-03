@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 function check-java-version {
 
-  if [ "$1" == "" ]; then
+  if [[ "$1" == "" ]]; then
     findPath="."
   else
     artifactPath=`echo $1 | sed "s|:|/|g" | sed "s|\.|/|g"`
@@ -11,7 +11,7 @@ function check-java-version {
   echo "Looking jars in $findPath"
 
 
-  for jarFile in `find $findPath -name *.jar`; do
+  for jarFile in `find $findPath -name "*.jar"`; do
     className=`jar tf $jarFile | grep .class | grep -v "[$]" | head -n 1 | sed s/.class//g`
     version=`javap -verbose -classpath $jarFile $className | grep 'major version:' | awk '{print $(NF)}'`
     case $version in
