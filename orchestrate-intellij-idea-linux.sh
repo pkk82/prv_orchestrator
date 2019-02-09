@@ -20,7 +20,8 @@ if [[ "$system" == "linux" ]]; then
 EOL
 
     # create desktop launchers
-    envVariable=`cat "$HOME/.bash_variables" | grep -v "PATH" | grep -v "#" | sed 's/export/env/g' | tr '\n' ' '`
+    . "$HOME/.bash_variables"
+    envVariable=`cat "$HOME/.bash_variables" | grep -v "PATH" | grep -v "#" | sed 's/export/ /g' | cut -d= -f1 | while read line || [[ "$line" ]]; do eval "echo env $line=\\$$line"; done | tr '\n' ' '`
 
 
     desktop=`cat << EOL
