@@ -55,8 +55,13 @@ function makeDir {
 # $3 - archive name transformation
 function unzipFamily {
   familyDir=$pfDir/$1
-  makeDir $familyDir
+  mainDirCreated=0
   for zip in `ls $cloudDir/$1/*.zip $cloudDir/$1/$system/*.zip 2>/dev/null`; do
+    if [[ $mainDirCreated == 0 ]]; then
+      makeDir $familyDir
+      mainDirCreated=1
+    fi
+
     dirInZip=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
     dirInZip=${dirInZip%/}
     zipName=`echo $zip | awk -F/ '{print $NF}'`
