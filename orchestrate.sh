@@ -126,7 +126,7 @@ function untarFamily {
 
 
 function copyFamilyAsFiles {
-  files=`ls -d $cloudDir/$1/$1*`
+  files=`ls -d $cloudDir/$1/$1* 2>/dev/null`
   if [[ "$files" != "" ]]; then
     familyDir=$pfDir/$1
     makeDir $familyDir
@@ -144,7 +144,7 @@ function copyFamilyAsFiles {
 }
 
 function copyFamilyAsDirs {
-  dirs=`ls -d $cloudDir/$1/$1*`
+  dirs=`ls -d $cloudDir/$1/$1* 2>/dev/null`
   if [[ "$dirs" != "" ]]; then
     familyDir=$pfDir/$1
     makeDir $familyDir
@@ -163,7 +163,7 @@ function copyFamilyAsDirs {
 
 function verifyVersion {
   familyDir=$pfDir/$1
-  for spec in `ls -d $familyDir/*`; do
+  for spec in `ls -d $familyDir/* 2>/dev/null`; do
     expectedVersion1=`echo $spec | awk -F/ '{print $(NF)}' | awk -F- '{print $(NF)}'`
     expectedVersion2=`echo $spec | awk -F/ '{print $(NF)}' | awk -F- '{print $(NF-1)}'`
     actualVersion=$(eval $spec/$2)
