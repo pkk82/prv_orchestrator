@@ -213,11 +213,13 @@ fi
 
 # download this project to workspace
 workspaceDir=`askWithDefault "Enter path to workspace" "$HOME/workspace"`
-mkdir -p "$workspaceDir/prv"
-repoDir="$workspaceDir/prv/orchestrator"
+repoName="prv_orchestrator"
+repoPath=`echo "$repoName" | sed "s|$(echo $repoName | awk -F_ '{print $NF}')||g" | sed 's|_|/|g'`
+mkdir -p "$workspaceDir/$repoPath"
+repoDir="$workspaceDir/`echo $repoName | sed 's|_|/|g'`"
 if [[ ! -d "$repoDir" ]]; then
   warningMessage "Orchestrator project not found, cloning it to $repoDir"
-  git clone "git@bitbucket.org:$bitbucketUser/prv_orchestrator.git" "$repoDir"
+  git clone "git@bitbucket.org:$bitbucketUser/$repoName.git" "$repoDir"
 else
   positiveMessage "Orchestrator project found"
 fi
