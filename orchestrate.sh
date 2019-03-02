@@ -194,47 +194,49 @@ function verify {
 }
 
 function createVariables2 {
-  maxVersionToCompare=0
-  maxVersion=""
-  familyDir=$pfDir/$1
-  upperName=`echo $2 | awk '{print toupper($0)}'`
-  echo "# $1" >> $varFile
-  for specPath in `ls -d $familyDir/* 2>/dev/null`; do
-    spec=`basename $specPath`
-    if [[ "$3" == "" ]]; then
-      version=$(echo $spec | awk -F- '{print $NF}')
-    else
-      version=$(eval " echo $spec | $3")
-    fi
-    majorVersion=$(echo $version | cut -d. -f1)
-    minorVersion=$(echo $version | cut -d. -f2)
-    version=${majorVersion}_$minorVersion
-    compactVersion=$majorVersion$minorVersion
-    minorVersionNumber=`echo $minorVersion | sed s/[a-z]*//g`
-    versionToCompare=$((10000 * $majorVersion + $minorVersionNumber))
-    if [[ $versionToCompare -gt $maxVersionToCompare ]]; then
-      maxVersionToCompare=$versionToCompare
-      maxVersion=$version
-      maxHomeVar="${upperName}${version}_HOME"
-    fi
-    specHomeVar="${upperName}${version}_HOME"
-    homeVar="${upperName}_HOME"
-    echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+  familyDirs=`ls -d $pfDir/$1/* 2>/dev/null`
+  if [[ "$familyDirs" != "" ]]; then
+    maxVersionToCompare=0
+    maxVersion=""
+    upperName=`echo $2 | awk '{print toupper($0)}'`
+    echo "# $1" >> $varFile
+    for specPath in $familyDirs; do
+      spec=`basename $specPath`
+      if [[ "$3" == "" ]]; then
+        version=$(echo $spec | awk -F- '{print $NF}')
+      else
+        version=$(eval " echo $spec | $3")
+      fi
+      majorVersion=$(echo $version | cut -d. -f1)
+      minorVersion=$(echo $version | cut -d. -f2)
+      version=${majorVersion}_$minorVersion
+      compactVersion=$majorVersion$minorVersion
+      minorVersionNumber=`echo $minorVersion | sed s/[a-z]*//g`
+      versionToCompare=$((10000 * $majorVersion + $minorVersionNumber))
+      if [[ $versionToCompare -gt $maxVersionToCompare ]]; then
+        maxVersionToCompare=$versionToCompare
+        maxVersion=$version
+        maxHomeVar="${upperName}${version}_HOME"
+      fi
+      specHomeVar="${upperName}${version}_HOME"
+      homeVar="${upperName}_HOME"
+      echo "export $specHomeVar=$specPath" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
+      if [[ -d "$specPath/bin" ]]; then
+        echo "alias use$2${compactVersion}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
+      else
+        echo "alias use$2${compactVersion}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
+      fi
+    done;
+
+
+    echo "export $homeVar=\$$maxHomeVar" >> $varFile
     if [[ -d "$specPath/bin" ]]; then
-      echo "alias use$2${compactVersion}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar/bin:\$PATH'" >> $aliasesFile
+      echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
     else
-      echo "alias use$2${compactVersion}='export $homeVar=\$$specHomeVar; export PATH=\$$homeVar:\$PATH'" >> $aliasesFile
+      echo "export PATH=\$$homeVar:\$PATH" >> $varFile
     fi
-  done;
-
-
-  echo "export $homeVar=\$$maxHomeVar" >> $varFile
-  if [[ -d "$specPath/bin" ]]; then
-    echo "export PATH=\$$homeVar/bin:\$PATH" >> $varFile
-  else
-    echo "export PATH=\$$homeVar:\$PATH" >> $varFile
+    . $varFile
   fi
-  . $varFile
 }
 
 # $1 - family
