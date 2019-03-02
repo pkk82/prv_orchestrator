@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
+
+
 if [[ "$system" == "linux" ]]; then
+
+  launcherDir=$HOME/.local/share/applications
 
   untarFamily intellij-idea "" "sed 's/ideaIU-/intellij-idea-/g'"
 
   # remove previous desktop launchers
-  sudo rm -rf /usr/share/applications/intellij*
+  rm -rf $launcherDir/intellij*
 
 
   for spec in `ls -d $pfDir/intellij-idea/* 2>/dev/null`; do
@@ -34,7 +38,7 @@ Terminal=false
 Type=Application
 EOL`
 
-    echo "$desktop" | sudo tee /usr/share/applications/intellij-$version.desktop >/dev/null
+    echo "$desktop" | tee $launcherDir/intellij-$version.desktop >/dev/null
 
   done
 
