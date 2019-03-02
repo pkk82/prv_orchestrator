@@ -30,6 +30,7 @@ for dtool in `ls -d $pfDir/dtool/dtool-* 2>/dev/null`; do
     if grep -q "$keyValue=\.\.\." "$launcher"; then
       if [[ "$customerSecret" == "" ]]; then
         customerSecret=`askPassword "Enter bitbucket dtool secret"`
+        printf "\n"
       fi
       if [[ "$customerSecret" != "" ]]; then
         sed -i $sedBackupSuffix "s/$keyValue=\.\.\./$keyValue=$customerSecret/g" "$launcher"
