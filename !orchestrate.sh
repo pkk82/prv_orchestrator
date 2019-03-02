@@ -35,7 +35,7 @@ function askWithDefault {
 
 # calculate system
 osname=`uname`
-if [ "$USERPROFILE" != "" ]; then
+if [[ "$USERPROFILE" != "" ]]; then
   system="windows"
 elif [[ "$osname" == "Linux" ]]; then
   system="linux"
@@ -48,11 +48,11 @@ positiveMessage "Detected system: $system"
 cloudDir=`askWithDefault "Enter path to dropbox" "$HOME/vd/Dropbox"`
 
 # validate sudo
-if [ "$system" != "windows" ]; then
+if [[ "$system" != "windows" ]]; then
   actionMessage "Check if `whoami` belongs to sudo"
   validateSudo=`sudo -v 2>&1`
 
-  if [ "$validateSudo" == "" ]; then
+  if [[ "$validateSudo" == "" ]]; then
     positiveMessage "User `whoami` is in sudo"
   else
     warningMessage "User `whoami` is not in sudo"
@@ -84,7 +84,7 @@ fi
 
 # set git username
 gitUserDefault=`git config --list | grep user.name | cut -d= -f2`
-if [ "$gitUserDefault" == "" ]; then
+if [[ "$gitUserDefault" == "" ]]; then
   gitUserDefault="$user@$host"
 fi
 gitUser=`askWithDefault "Enter git user name" "$gitUserDefault"`
@@ -99,7 +99,7 @@ git config --global user.email "$gitEmail"
 git config --global pull.rebase true
 
 # ssh key
-if [ -f "$HOME/.ssh/id_rsa" ]; then
+if [[ -f "$HOME/.ssh/id_rsa" ]]; then
   positiveMessage "private key found"
 else
   actionMessage "Generating ssh private key"
@@ -108,7 +108,7 @@ fi
 
 # gpg
 gpgKeys=`gpg --list-keys`
-if [ "$gpgKeys" == "" ]; then
+if [[ "$gpgKeys" == "" ]]; then
   export GNUPGHOME="$HOME/.gnupg"
   gpgPassword=`askPassword "Enter gpg password"`
   printf "\n"
@@ -157,19 +157,19 @@ labelAndKeyExists=`echo "$serverKeys" | grep "$label" | grep "$publicKey"`
 labelExists=`echo "$serverKeys" | grep "$label"`
 keyExists=`echo "$serverKeys" | grep "$publicKey"`
 
-if [ "$labelAndKeyExists" != "" ]; then
+if [[ "$labelAndKeyExists" != "" ]]; then
   positiveMessage "Public key found"
 else
   warningMessage "Public key not found"
 
-  if [ "$keyExists" != "" ]; then
+  if [[ "$keyExists" != "" ]]; then
     oldLabel=`echo "$serverKeys" | grep "$publicKey" | awk '{print $2}'`
     id=`echo "$serverKeys" | grep "$publicKey" | awk '{print $1}'`
     actionMessage "Removing public key with label $oldLabel"
     curl -X DELETE -u "$bitbucketUser:$bitbucketPassword" "$bitbucketSshUrl/$id"
   fi
 
-  if [ "$labelExists" != "" ]; then
+  if [[ "$labelExists" != "" ]]; then
     id=`echo "$serverKeys" | grep "$label" | awk '{print $1}'`
     actionMessage "Removing public key with label $label"
     curl -X DELETE -u "$bitbucketUser:$bitbucketPassword" "$bitbucketSshUrl/$id"
@@ -189,19 +189,19 @@ labelAndKeyExists=`echo "$serverKeys" | grep "$label" | grep "$publicKey"`
 labelExists=`echo "$serverKeys" | grep "$label"`
 keyExists=`echo "$serverKeys" | grep "$publicKey"`
 
-if [ "$labelAndKeyExists" != "" ]; then
+if [[ "$labelAndKeyExists" != "" ]]; then
   positiveMessage "Public key found"
 else
   warningMessage "Public key not found"
 
-  if [ "$keyExists" != "" ]; then
+  if [[ "$keyExists" != "" ]]; then
     oldLabel=`echo "$serverKeys" | grep "$publicKey" | awk '{print $2}'`
     id=`echo "$serverKeys" | grep "$publicKey" | awk '{print $1}'`
     actionMessage "Removing public key with label $oldLabel"
     curl -X DELETE -u "$gitHubUser:$gitHubPassword" "$gitHubSshUrl/$id"
   fi
 
-  if [ "$labelExists" != "" ]; then
+  if [[ "$labelExists" != "" ]]; then
     id=`echo "$serverKeys" | grep "$label" | awk '{print $1}'`
     actionMessage "Removing public key with label $label"
     curl -X DELETE -u "$gitHubUser:$gitHubPassword" "$gitHubSshUrl/$id"
@@ -215,7 +215,7 @@ fi
 workspaceDir=`askWithDefault "Enter path to workspace" "$HOME/workspace"`
 mkdir -p "$workspaceDir/prv"
 repoDir="$workspaceDir/prv/orchestrator"
-if [ ! -d "$repoDir" ]; then
+if [[ ! -d "$repoDir" ]]; then
   warningMessage "Orchestrator project not found, cloning it to $repoDir"
   git clone "git@bitbucket.org:$bitbucketUser/prv_orchestrator.git" "$repoDir"
 else
@@ -225,6 +225,6 @@ fi
 # copy file to dropbox
 me=`basename "$0"`
 dest="$cloudDir/scripts/$me"
-if [ "`pwd`/$me" != "$dest" ]; then
-	cp -f $me $dest
+if [[ "`pwd`/$me" != "$dest" ]]; then
+  cp -f $me $dest
 fi
