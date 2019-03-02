@@ -54,37 +54,35 @@ function makeDir {
 # $2 - dirInArch transformation
 # $3 - archive name transformation
 function unzipFamily {
-  familyDir=$pfDir/$1
-  mainDirCreated=0
-  for zip in `ls $cloudDir/$1/*.zip $cloudDir/$1/$system/*.zip 2>/dev/null`; do
-    if [[ $mainDirCreated == 0 ]]; then
-      makeDir $familyDir
-      mainDirCreated=1
-    fi
-
-    dirInZip=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
-    dirInZip=${dirInZip%/}
-    zipName=`echo $zip | awk -F/ '{print $NF}'`
-    destDir=$familyDir/$dirInZip
-    if [[ "$2" != "" ]]; then
+  archives=`ls $cloudDir/$1/*.zip $cloudDir/$1/$system/*.zip 2>/dev/null`
+  if [[ "$archives" != "" ]]; then
+    familyDir=$pfDir/$1
+    makeDir $familyDir
+    for zip in $archives; do
+      dirInZip=$(unzip -l $zip | awk '{print $4}' | grep '/' | sed -e 's|/.*||' | uniq)
+      dirInZip=${dirInZip%/}
+      zipName=`echo $zip | awk -F/ '{print $NF}'`
       destDir=$familyDir/$dirInZip
-      destDir=`eval "echo $destDir | $2"`
-    fi
-    if [[ "$3" != "" ]]; then
-      destDir=$familyDir/$zipName
-      destDir=`eval "echo $destDir | $3"`
-      destDir=`echo $destDir | sed 's/.zip//g'`
-    fi
-    if [[ -d "$destDir" ]]; then
-      echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
-    else
-      unzip -q $zip -d $familyDir
-      if [[ "$2" != "" || "$3" != "" ]]; then
-        mv $familyDir/$dirInZip $destDir
+      if [[ "$2" != "" ]]; then
+        destDir=$familyDir/$dirInZip
+        destDir=`eval "echo $destDir | $2"`
       fi
-      echo "$dirInZip extracted to $familyDir as $destDir"
-    fi
-  done
+      if [[ "$3" != "" ]]; then
+        destDir=$familyDir/$zipName
+        destDir=`eval "echo $destDir | $3"`
+        destDir=`echo $destDir | sed 's/.zip//g'`
+      fi
+      if [[ -d "$destDir" ]]; then
+        echo -e "${CYAN}Dir $destDir exists - skipping${NC}"
+      else
+        unzip -q $zip -d $familyDir
+        if [[ "$2" != "" || "$3" != "" ]]; then
+          mv $familyDir/$dirInZip $destDir
+        fi
+        echo "$dirInZip extracted to $familyDir as $destDir"
+      fi
+    done
+  fi
 }
 
 # $1 - family name
@@ -128,33 +126,39 @@ function untarFamily {
 
 
 function copyFamilyAsFiles {
-  familyDir=$pfDir/$1
-  makeDir $familyDir
-  for file in `ls -d $cloudDir/$1/$1*`; do
-    fileName=$(echo $file | awk -F/ '{print $(NF)}')
-    destFile=$familyDir/$fileName
-    if [[ -f "$destFile" ]]; then
-      echo -e "${CYAN}File $destFile exists - skipping${NC}"
-    else
-      cp $file $familyDir
-      echo "$fileName copied to $familyDir"
-    fi
-  done
+  files=`ls -d $cloudDir/$1/$1*`
+  if [[ "$files" != "" ]]; then
+    familyDir=$pfDir/$1
+    makeDir $familyDir
+    for file in ; do
+      fileName=$(echo $file | awk -F/ '{print $(NF)}')
+      destFile=$familyDir/$fileName
+      if [[ -f "$destFile" ]]; then
+        echo -e "${CYAN}File $destFile exists - skipping${NC}"
+      else
+        cp $file $familyDir
+        echo "$fileName copied to $familyDir"
+      fi
+    done
+  fi
 }
 
 function copyFamilyAsDirs {
-  familyDir=$pfDir/$1
-  makeDir $familyDir
-  for dir in `ls -d $cloudDir/$1/$1*`; do
-    dirName=$(echo $dir | awk -F/ '{print $(NF)}')
-    destDir=$familyDir/$dirName
-    if [[ -d "$destDir" ]]; then
-      echo -e "${CYAN}Directory $destDir exists - skipping${NC}"
-    else
-      cp -R $dir ${familyDir%/}
-      echo -e "${GREEN}$destDir copied to $familyDir${NC}"
-    fi
-  done
+  dirs=`ls -d $cloudDir/$1/$1*`
+  if [[ "$dirs" != "" ]]; then
+    familyDir=$pfDir/$1
+    makeDir $familyDir
+    for dir in $dirs; do
+      dirName=$(echo $dir | awk -F/ '{print $(NF)}')
+      destDir=$familyDir/$dirName
+      if [[ -d "$destDir" ]]; then
+        echo -e "${CYAN}Directory $destDir exists - skipping${NC}"
+      else
+        cp -R $dir ${familyDir%/}
+        echo -e "${GREEN}$destDir copied to $familyDir${NC}"
+      fi
+    done
+  fi
 }
 
 function verifyVersion {
