@@ -90,7 +90,7 @@ EOL
             <password>$mvnPrvRepoPasswordEncrypted</password>
         </server>
         <server>
-            <id>$mvnPrvRepoReleaseUrl</id>
+            <id>$mvnPrvRepoReleaseId</id>
             <username>$mvnPrvRepoUsername</username>
             <password>$mvnPrvRepoPasswordEncrypted</password>
         </server>
