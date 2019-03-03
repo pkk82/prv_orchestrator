@@ -33,6 +33,16 @@ function askWithDefault {
   echo "$answer"
 }
 
+function askWithDefaults {
+  defValue=$2
+  if [[ "$2" == "" ]] && [[ $3 != "" ]]; then
+    defValue=$3
+  fi
+  read -p "$(queryMessageWithDefault "$1" "$defValue")" answer
+  local answer=${answer:-$defValue}
+  echo "$answer"
+}
+
 function askYN {
   read -p "$(queryMessageWithDefault "$1 [y/n]" "$2")" answer
   local answer=${answer:-$2}

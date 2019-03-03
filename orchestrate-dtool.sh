@@ -25,6 +25,24 @@ customerSecret=`findKey $customerSecretKey`
 customerKeyKey="\-Ddtool.bitbucket.customer.key"
 customerKey=`findKey $customerKeyKey`
 
+bbUserDefaultKey="\-Ddtool.bitbucket.user.default"
+bbUserDefaultPrevious=`findKey $bbUserDefaultKey`
+
+gitCommitterEmailKey="\-Ddtool.git.committer.email"
+gitCommitterEmailPrevious=`findKey $gitCommitterEmailKey`
+
+bbUserDefaultSuggested=`git remote -v | grep "origin" | grep "fetch" | sed 's|^[^:]*:\([^/]*\).*$|\1|g'`
+gitCommitterEmailSuggested=`git config --list | grep "user.email" | cut -d= -f2`
+
+# $1 - file name
+# $2 - key
+# $3 - value
+function replaceInFile {
+  if [[ "$3" != "" ]]; then
+    sed -i $sedBackupSuffix "s/$2=\.\.\./$2=$3/g" "$1"
+  fi
+}
+
 
 # create new
 unzipFamily dtool
@@ -32,6 +50,9 @@ unzipFamily dtool
 latest=`ls -d $pfDir/dtool/dtool-* | sort | tail -n 1 2>/dev/null`
 echo "export DTOOL_HOME=$latest" | sed "s|$pfDir|\$PF_DIR|" >> $varFile
 echo "export PATH=\$DTOOL_HOME:\$PATH" >> $varFile
+
+bbUserDefault=""
+gitCommitterEmail=""
 
 for dtool in `ls -d $pfDir/dtool/dtool-* 2>/dev/null`; do
   for file in ${files[*]}; do
@@ -41,16 +62,35 @@ for dtool in `ls -d $pfDir/dtool/dtool-* 2>/dev/null`; do
         customerKey=`askPassword "Enter bitbucket dtool key"`
         printf "\n"
       fi
-       if [[ "$customerKey" != "" ]]; then
-        sed -i $sedBackupSuffix "s/$customerKeyKey=\.\.\./$customerKeyKey=$customerKey/g" "$launcher"
-      fi
       if [[ "$customerSecret" == "" ]]; then
         customerSecret=`askPassword "Enter bitbucket dtool secret"`
         printf "\n"
       fi
-      if [[ "$customerSecret" != "" ]]; then
-        sed -i $sedBackupSuffix "s/$customerSecretKey=\.\.\./$customerSecretKey=$customerSecret/g" "$launcher"
+
+      if [[ "$bbUserDefaultPrevious" != "$bbUserDefaultSuggested" ]] && [[ "$bbUserDefaultPrevious" != "" ]]; then
+        warningMessage "Found different bb user defaults: $bbUserDefaultPrevious / $bbUserDefaultSuggested"
       fi
+
+
+      if [[ "$gitCommitterEmailPrevious" != "$gitCommitterEmailSuggested" ]] && [[ "$gitCommitterEmailPrevious" != "" ]]; then
+        warningMessage "Found different git committer defaults: $gitCommitterEmailPrevious / $gitCommitterEmailSuggested"
+      fi
+
+
+      if [[ "$bbUserDefault" == "" ]]; then
+        bbUserDefault=`askWithDefaults "Enter bb user" $bbUserDefaultPrevious $bbUserDefaultSuggested`
+      fi
+
+      if [[ "$gitCommitterEmail" == "" ]]; then
+        gitCommitterEmail=`askWithDefaults "Enter git committer email" $gitCommitterEmailPrevious $gitCommitterEmailSuggested`
+      fi
+
+      replaceInFile "$launcher" "$customerKeyKey" "$customerKey"
+      replaceInFile "$launcher" "$customerSecretKey" "$customerSecret"
+      replaceInFile "$launcher" "$bbUserDefaultKey" "$bbUserDefault"
+      replaceInFile "$launcher" "$gitCommitterEmailKey" "$gitCommitterEmail"
+
+
     fi
   done
 done
