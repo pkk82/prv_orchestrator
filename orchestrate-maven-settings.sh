@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 mvnPrvRepoUsername="pkk82"
 
 mvnPrvRepoId="nexus.prv"
@@ -24,13 +23,7 @@ echo "export MVN_PRV_REPO_RELEASE_URL=$mvnPrvRepoReleaseUrl" >> $varFile
 echo "export MVN_PRV_REPO_SNAPSHOT_ID=$mvnPrvRepoSnapshotId" >> $varFile
 echo "export MVN_PRV_REPO_SNAPSHOT_URL=$mvnPrvRepoSnapshotUrl" >> $varFile
 
-
-configureMvnDefault="n"
-echo -e -n "${CYAN}Configure maven settings [y/n]${NC} ($configureMvnDefault): "
-read configureMvn
-configureMvn=${configureMvn:-$configureMvnDefault}
-
-if [ "$configureMvn" == "y" ]; then
+if [[ `askYN "Configure maven settings" "n"` == "y" ]]; then
 
   dotM2=$HOME/.m2
   mkdir -p $dotM2
@@ -47,12 +40,12 @@ if [ "$configureMvn" == "y" ]; then
   printf "\nEncrypting master password "
   printf '.%.0s' $(seq 1 $mavenMasterPasswordLength)
   printf "\n"
-  encryptedMavenPassword=$($MVN_HOME/bin/mvn --encrypt-master-password $mavenMasterPassword)
+  encryptedMavenPassword=`$MVN_HOME/bin/mvn --encrypt-master-password $mavenMasterPassword`
 
   echo "" > $mvnSecuritySettings
   chmod 0600 $mvnSecuritySettings
 
-cat >> $mvnSecuritySettings << EOL
+  cat >> $mvnSecuritySettings << EOL
 <settingsSecurity>
     <master>$encryptedMavenPassword</master>
 </settingsSecurity>
@@ -61,21 +54,21 @@ EOL
 
   ossSonatypePassword=`askPassword "Public repo (pkk@oss.sonatype.org) password"`
   printf "\n"
-  encryptedOssSonatypePassword=$($MVN_HOME/bin/mvn --encrypt-password $ossSonatypePassword)
+  encryptedOssSonatypePassword=`$MVN_HOME/bin/mvn --encrypt-password $ossSonatypePassword`
 
   mvnPrvRepoPassword=`askPassword "Prv repo ($mvnPrvRepoUsername@$mvnPrvRepoUrl)"`
   printf "\n"
-  mvnPrvRepoPasswordEncrypted=$($MVN_HOME/bin/mvn --encrypt-password $mvnPrvRepoPassword)
+  mvnPrvRepoPasswordEncrypted=`$MVN_HOME/bin/mvn --encrypt-password $mvnPrvRepoPassword`
 
   dockerIoPassword=`askPassword "Docker (pkk82@docker.io) password"`
   printf "\n"
-  encryptedDockerIoPassword=$($MVN_HOME/bin/mvn --encrypt-password $dockerIoPassword)
+  encryptedDockerIoPassword=`$MVN_HOME/bin/mvn --encrypt-password $dockerIoPassword`
 
   gpgKeyPassphrase=`askPassword "Local gpg password"`
   printf "\n"
-  encryptedGpgKeyPassphrase=$($MVN_HOME/bin/mvn --encrypt-password $gpgKeyPassphrase)
+  encryptedGpgKeyPassphrase=`$MVN_HOME/bin/mvn --encrypt-password $gpgKeyPassphrase`
 
-cat > $mvnSettings << EOL
+  cat > $mvnSettings << EOL
 <?xml version="1.0" encoding="UTF-8"?>
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -105,11 +98,6 @@ cat > $mvnSettings << EOL
             <id>$mvnPrvRepoSnapshotId</id>
             <username>$mvnPrvRepoUsername</username>
             <password>$mvnPrvRepoPasswordEncrypted</password>
-        </server>
-        <server>
-            <id>pkk82-nexus-public</id>
-            <username>pkk82</username>
-            <password>$encryptedNexusCloudPassword</password>
         </server>
         <server>
             <id>gpg</id>
