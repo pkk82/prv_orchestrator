@@ -15,5 +15,6 @@ alias dris='docker images | grep SNAPSHOT | awk '\''{print \$3}'\'' | xargs dock
 alias use-maven-wrapper='mvn -U -N io.takari:maven:wrapper'
 alias ssh-nexus='ssh pkk82.pl -p 57185'
 alias gpom='git push origin master'
+alias vssh='vagrant ssh'
 $cclip
 EOL
