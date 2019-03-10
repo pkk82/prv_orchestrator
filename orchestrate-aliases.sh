@@ -16,5 +16,7 @@ alias use-maven-wrapper='mvn -U -N io.takari:maven:wrapper'
 alias ssh-nexus='ssh pkk82.pl -p 57185'
 alias gpom='git push origin master'
 alias vssh='vagrant ssh'
+alias vdf='vagrant destroy -f'
+alias vu='vagrant up'
 $cclip
 EOL
