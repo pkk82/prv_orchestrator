@@ -18,8 +18,12 @@ gsettings set org.gnome.desktop.wm.keybindings begin-resize  "[]"
 
 gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-up  "['<Shift><Alt>o']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-down  "['<Shift><Alt>l']"
-gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-left  "['<Shift><Alt>m']"
-gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-right  "['<Shift><Alt>greater']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-left  "['<Shift><Alt>comma']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-monitor-right  "['<Shift><Alt>period']"
+
+gsettings set org.gnome.mutter.keybindings toggle-tiled-left  "['<Primary><Shift><Super>comma']"
+gsettings set org.gnome.mutter.keybindings toggle-tiled-right  "['<Primary><Shift><Super>period']"
+
 
 gsettings set org.gnome.desktop.wm.keybindings move-to-side-n  "[]"
 gsettings set org.gnome.desktop.wm.keybindings move-to-side-s  "[]"
@@ -33,7 +37,7 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-4 "['<Primary><
 
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-up "['<Primary><Alt><Super>o']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-down "['<Primary><Alt><Super>l']"
-gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-left "['<Primary><Alt><Super>m']"
+gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-left "['<Primary><Alt><Super>comma']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-right "['<Primary><Alt><Super>period']"
 gsettings set org.gnome.desktop.wm.keybindings move-to-workspace-last "['<Primary><Alt><Super>slash']"
 
@@ -44,7 +48,7 @@ gsettings set org.gnome.desktop.wm.keybindings move-to-corner-se "['<Shift><Ctrl
 
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-up "['<Alt><Super>o']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-down "['<Alt><Super>l']"
-gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Alt><Super>m']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Alt><Super>comma']"
 gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Alt><Super>period']"
 
 gsettings set org.cinnamon.desktop.keybindings.wm toggle-recording  "[]"
