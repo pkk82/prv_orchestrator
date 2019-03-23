@@ -365,6 +365,7 @@ echo "export PF_DIR=$pfDir" >> $varFile
 . orchestrate-java-openjdk.sh
 . orchestrate-java-jce-policy.sh
 . orchestrate-java.sh
+. orchestrate-rust.sh
 . orchestrate-dtool.sh
 . orchestrate-ant.sh
 . orchestrate-kotlin.sh
