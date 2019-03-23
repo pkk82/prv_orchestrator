@@ -293,7 +293,7 @@ function createVariables {
 }
 
 function backslashWhenWindows {
-  if [[ "$system" == "windows" ]]; then
+  if [[ "$system" == "win" ]]; then
     finalPath=$(echo "$1" | sed 's|/c|c:|g' | sed 's|/|\\|g')
   else
     finalPath="$1"
@@ -302,7 +302,7 @@ function backslashWhenWindows {
 }
 
 function driveNotationWhenWindows {
-  if [[ "$system" == "windows" ]]; then
+  if [[ "$system" == "win" ]]; then
     finalPath=$(echo "$1" | sed 's|/c|c:|g')
   else
     finalPath="$1"
@@ -313,7 +313,7 @@ function driveNotationWhenWindows {
 # calculate system
 osname=`uname`
 if [[ "$USERPROFILE" != "" ]]; then
-  system="windows"
+  system="win"
   mainDir="/c"
   sedBackupSuffix=""
 elif [[ "$osname" == "Linux" ]]; then
@@ -358,7 +358,7 @@ echo "export CLOUD_SOFTWARE_DIR=$cloudDir" > $varFile
 echo "export PF_DIR=$pfDir" >> $varFile
 
 . orchestrate-aliases.sh
-. orchestrate-java-oracle-windows.sh
+. orchestrate-java-oracle-win.sh
 . orchestrate-java-oracle-mac.sh
 . orchestrate-java-oracle-linux.sh
 . orchestrate-java-oracle.sh

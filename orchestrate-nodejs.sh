@@ -6,7 +6,7 @@ nodejsDir=$pfDir/nodejs
 untarFamily nodejs "sed 's|node-v|nodejs-|g' | sed 's|-[^-]*-x64$||g'"
 unzipFamily nodejs "sed 's|node-v|nodejs-|g' | sed 's|-[^-]*-x64$||g'"
 
-if [ "$system" == "windows" ]; then
+if [[ "$system" == "win" ]]; then
   prefix=""
 else
   prefix="bin/"

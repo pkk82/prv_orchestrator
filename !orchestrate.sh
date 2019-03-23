@@ -36,7 +36,7 @@ function askWithDefault {
 # calculate system
 osname=`uname`
 if [[ "$USERPROFILE" != "" ]]; then
-  system="windows"
+  system="win"
 elif [[ "$osname" == "Linux" ]]; then
   system="linux"
 elif [[ "$osname" == "Darwin" ]]; then
@@ -48,7 +48,7 @@ positiveMessage "Detected system: $system"
 cloudDir=`askWithDefault "Enter path to dropbox" "$HOME/vd/Dropbox"`
 
 # validate sudo
-if [[ "$system" != "windows" ]]; then
+if [[ "$system" != "win" ]]; then
   actionMessage "Check if `whoami` belongs to sudo"
   validateSudo=`sudo -v 2>&1`
 

@@ -6,11 +6,11 @@ gnomeName="keymap-gnome"
 macName="keymap-mac"
 winName="keymap-win"
 
-if [ "$system" == "linux" ]; then
+if [[ "$system" == "linux" ]]; then
   name=$gnomeName
-elif [ "$system" == "mac"  ]; then
+elif [[ "$system" == "mac" ]]; then
   name=$macName
-elif [ "$system" == "windows" ]; then
+elif [[ "$system" == "win" ]]; then
   name=$winName
 fi
 
