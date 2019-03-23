@@ -2,12 +2,12 @@
 
 if [[ "$system" == "linux" ]]; then
 
-  javaDir=$pfDir/java
+  javaDir=$pfDir/java-oracle
   makeDir $javaDir
   if [[ `askYN "Configure Java from bin" "n"` == "y" ]]; then
 
     currentDir=`pwd`
-    for javaBinPath in `ls -d $cloudDir/java/$system-bin/*bin 2>/dev/null`; do
+    for javaBinPath in `ls -d $cloudDir/java-oracle/$system-bin/*bin 2>/dev/null`; do
 
       javaBin=`basename $javaBinPath`
       proceed=`askYN "Configure $javaBin" "n"`
@@ -44,7 +44,7 @@ if [[ "$system" == "linux" ]]; then
     cd $currentDir
   fi
 
-  untarFamily java "" "sed 's/-$system//g' | sed 's/.tar.gz//g'"
+  untarFamily java-oracle "" "sed 's/-$system//g' | sed 's/.tar.gz//g'"
 fi
 
 
