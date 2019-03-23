@@ -3,10 +3,10 @@
 
 if [[ "$system" == "mac" ]]; then
 
-  javaDir=$pfDir/java
-  makeDir $javaDir
+  javaDir="$pfDir/java-oracle"
+  makeDir "$javaDir"
 
-  for javaDmg in `ls -d $cloudDir/java/$system/*.dmg 2>/dev/null`; do
+  for javaDmg in `ls -d $cloudDir/java-oracle/$system/*.dmg 2>/dev/null`; do
     mountDir=`hdiutil attach $javaDmg | grep 'Apple_HFS' | awk '{print substr($0, index($0, $3))}'`;
     mainPkgFile=`find "${mountDir}" -name "*.pkg" 2>/dev/null | head -n 1`
     version=`echo $javaDmg | awk -F- '{print $(NF-2)}'`
