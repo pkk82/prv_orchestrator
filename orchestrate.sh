@@ -136,11 +136,11 @@ function untarFamily {
 
 
 function copyFamilyAsFiles {
-  files=`ls -d $cloudDir/$1/$1* 2>/dev/null`
+  files=`ls -f $cloudDir/$1/$1* 2>/dev/null`
   if [[ "$files" != "" ]]; then
     familyDir=$pfDir/$1
     makeDir $familyDir
-    for file in ; do
+    for file in $files; do
       fileName=$(echo $file | awk -F/ '{print $(NF)}')
       destFile=$familyDir/$fileName
       if [[ -f "$destFile" ]]; then
