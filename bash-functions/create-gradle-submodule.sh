@@ -2,6 +2,12 @@
 
 function create-gradle-submodule {
 
+  if [[ detect-system == "mac" ]]; then
+    sedBackupSuffix=".bak"
+  else
+    sedBackupSuffix=""
+  fi
+
 
   if [[ "$1" == ""  || "$2" == "" ]]; then
     echo "Use create-gradle-submodule <module name> [java|kotlin]"
@@ -10,7 +16,8 @@ function create-gradle-submodule {
     mkdir -p $submodule
 
     if `grep -q "include" settings.gradle`; then
-      echo ",'$submodule'" >> settings.gradle
+      lastLine=`cat settings.gradle | awk 'NF{p=$0}END{print p}'`
+      sed -i $sedBackupSuffix "s/$lastLine/$lastLine,\n        '$submodule'/g" settings.gradle
     else
       echo "include '$submodule'" >> settings.gradle
     fi
