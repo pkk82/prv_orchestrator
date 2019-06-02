@@ -31,6 +31,9 @@ cat > $intellijKeymapsDir/keymap-gnome.xml << EOL
   <action id="ImportModule">
     <keyboard-shortcut first-keystroke="shift ctrl alt o" />
   </action>
+  <action id="DebugClass">
+    <keyboard-shortcut first-keystroke="shift ctrl d" />
+  </action>
   <action id="Macro.format-on-save">
    <keyboard-shortcut first-keystroke="ctrl alt s" />
   </action>
@@ -42,6 +45,18 @@ cat > $intellijKeymapsDir/keymap-gnome.xml << EOL
   </action>
   <action id="OpenInBrowser">
     <keyboard-shortcut first-keystroke="shift ctrl alt b" />
+  </action>
+  <action id="Replace">
+    <keyboard-shortcut first-keystroke="alt r" />
+  </action>
+  <action id="ReplaceInPath">
+    <keyboard-shortcut first-keystroke="shift alt r" />
+  </action>
+  <action id="Rerun">
+    <keyboard-shortcut first-keystroke="ctrl r" />
+  </action>
+  <action id="RunClass">
+    <keyboard-shortcut first-keystroke="shift ctrl r" />
   </action>
   <action id="ShowProjectStructureSettings">
     <keyboard-shortcut first-keystroke="ctrl semicolon" />
