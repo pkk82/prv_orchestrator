@@ -24,4 +24,5 @@ function copy-node-submodule {
   rm -f $2/package-lock.json
 
   sed -i $sedBackupSuffix "s/\"name\": \".*\"/\"name\": \"$2\"/g" "$2/package.json"
+  cd "$2"
 }
